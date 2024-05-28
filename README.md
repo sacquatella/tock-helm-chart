@@ -18,9 +18,9 @@ You will find more information on chart parameters at the helm chart [README](ch
 
 The chart deploy all tock components. It's able also to deploy a mongodb database (Bitnami mongoDb chart is used as subchart) or use an existing mongodb backend.
 
-
+<div hidden>
 ```plantuml
-@startuml
+@startuml tock-on-k8s
 
 package "Kubernetes" {
 
@@ -130,3 +130,7 @@ HTTP - BAPIING
 
 @enduml
 ```
+
+</div>
+
+![](tock-on-k8s.svg)
