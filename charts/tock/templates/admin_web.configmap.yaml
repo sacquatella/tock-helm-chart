@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-admin-web-cfg'
+  labels:
+    app.kubernetes.io/name: admin-web
+    app.kubernetes.io/component: admin-web
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+    tock_mongo_url: '{{ template "urls.mongo" . }}'
+{{- if .Values.adminWeb.environment.nlp_duckling_url }}
+    nlp_duckling_url: '{{ tpl .Values.adminWeb.environment.nlp_duckling_url . }}'
+ {{- else }}
+    nlp_duckling_url: 'http://{{ .Release.Name }}-duckling:8080'
+{{- end }}
+{{- if .Values.adminWeb.environment.tock_bot_admin_rest_default_base_url }}
+    tock_bot_admin_rest_default_base_url: '{{ tpl .Values.adminWeb.environment.tock_bot_admin_rest_default_base_url . }}'
+{{- else }}
+    tock_bot_admin_rest_default_base_url: 'http://{{ .Release.Name }}-bot-api:8080'
+{{- end }}
+{{- if .Values.adminWeb.environment.tock_bot_compiler_service_url }}
+    tock_bot_compiler_service_url: '{{ tpl .Values.adminWeb.environment.tock_bot_compiler_service_url . }}'
+{{- else }}
+    tock_bot_compiler_service_url:  'http://{{ .Release.Name }}-kotlin-compiler:8080'
+{{- end }}
+{{- if .Values.adminWeb.environment.tock_configuration_bot_default_base_url }}
+    tock_configuration_bot_default_base_url: '{{ tpl .Values.adminWeb.environment.tock_configuration_bot_default_base_url . }}'
+{{- else }}
+    tock_configuration_bot_default_base_url: 'http://{{ .Release.Name }}-bot-api:8080'
+{{- end }}
+    botadminverticle_body_limit : '{{ default "-1" .Values.adminWeb.environment.botadminverticle_body_limit . }}'
+    tock_https_env: '{{ default "prod" .Values.adminWeb.environment.tock_https_env }}'
+    tock_bot_api: '{{ default "true" .Values.adminWeb.environment.tock_bot_api }}'
+    tock_env: '{{ default "false" .Values.adminWeb.environment.tock_env }}'
+    tock_default_log_level: '{{ default "info" .Values.adminWeb.environment.tock_default_log_level }}'
+{{ if .Values.global.tockMongodbFront}}
+    tock_front_mongo_db: '{{ tpl .Values.global.tockMongodbFront . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbModel}}
+    tock_model_mongo_db: '{{ tpl .Values.global.tockMongodbModel . }}'
+{{- end }}
+{{ if .Values.global.tockMongdbCache}}
+    tock_cache_mongo_db: '{{ tpl .Values.global.tockMongdbCache . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbBot}}
+    tock_bot_mongo_db: '{{ tpl .Values.global.tockMongodbBot . }}'
+{{- end }}
+{{ if .Values.adminWeb.environment.botadminverticle_base_href}}
+    botadminverticle_base_href: '{{ tpl .Values.adminWeb.environment.botadminverticle_base_href . }}'
+{{- end }}

@@ -1,0 +1,29 @@
+{{- if .Values.adminWeb.ingress.enabled -}}
+{{- $ingressPath := .Values.adminWeb.ingress.path -}}
+{{- if .Values.adminWeb.ingress.deprecated -}}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: '{{ .Release.Name }}-admin-web'
+  labels:
+    app.kubernetes.io/name: admin-web
+    app.kubernetes.io/component: admin-web
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.adminWeb.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  rules:
+    - host: tockstudio-{{ .Release.Name }}.{{ .Values.global.wildcardDomain }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+                serviceName: {{ .Release.Name }}-admin-web
+                servicePort: 8080
+{{- end }}
+{{- end }}

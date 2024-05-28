@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-kotlin-compiler-cfg'
+  labels:
+    app.kubernetes.io/name: kotlin-compiler
+    app.kubernetes.io/component: kotlin-compiler
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+    tock_env: '{{ default "prod" .Values.kotlinCompiler.environment.tock_env }}'
+    tock_kotlin-compiler_classpath: '{{ default "/maven" .Values.kotlinCompiler.environment.tock_kotlin_compiler_classpath }}'
+    tock_default_log_level: '{{ default "info" .Values.kotlinCompiler.environment.tock_default_log_level }}'

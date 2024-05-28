@@ -1,0 +1,46 @@
+
+Congratulations,
+
+Your application tock is now deployed. This may take a while to be up and responding.
+
+Get the Tock Studio URL by running these commands:
+
+{{- if .Values.adminWeb.ingress.enabled }}
+http{{ if .Values.adminWeb.ingress.tls }}s{{ end }}://tockstudio-{{ .Release.Name }}.{{ .Values.global.wildcardDomain }}{{ .Values.adminWeb.ingress.path }}
+{{- else if contains "NodePort" .Values.adminWeb.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ .Release.Name }}-admin-web)
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.adminWeb.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get svc -w {{ .Release.Name }}-admin-web'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ .Release.Name }}-admin-web -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo http://$SERVICE_IP:{{ .Values.adminWeb.service.port }}
+{{- else if contains "ClusterIP" .Values.adminWeb.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/component=admin-web,app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl port-forward $POD_NAME 8080:8080
+{{- end }}
+
+
+The default login/password is admin@app.com/password.
+
+
+Bot api can be reach through the following url:
+
+{{- if .Values.botApi.ingress.enabled }}
+http{{ if .Values.botApi.ingress.tls }}s{{ end }}://bot-api-{{ .Release.Name }}.{{ .Values.global.wildcardDomain }}{{ .Values.botApi.ingress.path }}
+{{- else if contains "NodePort" .Values.botApi.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services  {{ .Release.Name }}-bot-api)
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.botApi.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get svc -w {{ .Release.Name }}-bot-api'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ .Release.Name }}-bot-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo http://$SERVICE_IP:{{ .Values.adminWeb.service.port }}
+{{- else if contains "ClusterIP" .Values.botApi.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/component=bot-api,app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl port-forward $POD_NAME 8080:8080
+{{- end }}

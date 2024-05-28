@@ -1,0 +1,21 @@
+global:
+  wildcardDomain: rancher.localhost
+  deployMongoDb:
+    enabled: true
+
+botApi:
+  ingress:
+    enabled: true
+
+mongodb:
+  architecture: "replicaset"
+  replicaCount: 1 
+  auth:
+    enabled: false
+  persistence:
+    enabled: false
+    size: 1Gi
+
+adminWeb:
+  ingress:
+    enabled: true

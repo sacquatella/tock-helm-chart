@@ -1,0 +1,24 @@
+global:
+  wildcardDomain: rancher.localhost
+  deployMongoDb:
+    enabled: true
+
+botApi:
+  ingress:
+    enabled: true
+
+adminWeb:
+  ingress:
+    enabled: true
+
+mongodb:
+  architecture: "replicaset"
+  auth:
+    enabled: false
+  persistence:
+    enabled: false
+    size: 1Gi
+  image:
+    repository: zcube/bitnami-compat-mongodb
+    tag: 6.0.5
+

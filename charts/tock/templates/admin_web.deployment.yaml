@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ .Release.Name }}-admin-web'
+  labels:
+    app.kubernetes.io/name: admin-web
+    app.kubernetes.io/component: admin-web
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.adminWeb.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: admin-web
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/resource: deployment
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: admin-web
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/resource: deployment
+    spec:
+      {{- include "adminWeb.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.adminWeb.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.adminWeb.podSecurityContext "enabled" | toYaml | nindent 10 }}
+      {{- end }}
+      initContainers:
+        - name: check-mongo
+          image:  {{ include "initContainer.image" . }}
+          {{- if .Values.global.initContainerImage.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.global.initContainerImage.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          command:
+            - sh
+            - -c
+            - |-
+              OK=0
+              echo "Checking mongo port"
+              while [ $OK != 1 ]; do
+                  echo -n "."
+                  nc -z {{ template "url.mongo.isup" . }} 27017 2>&1 >/dev/null && OK=1 || sleep 1
+              done
+              echo
+              echo "Done"
+      {{- if .Values.adminWeb.resources }}
+          resources: {{- toYaml .Values.adminWeb.resources | nindent 12 }}
+      {{- end }}
+        - name: check-duckling
+          image:  {{ include "initContainer.image" . }}
+          {{- if .Values.global.initContainerImage.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.global.initContainerImage.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          command:
+            - sh
+            - -c
+            - |-
+              OK=0
+              echo "Checking duckling port"
+              while [ $OK != 1 ]; do
+                  echo -n "."
+                  nc -z {{ .Release.Name }}-duckling 8080 2>&1 >/dev/null && OK=1 || sleep 1
+              done
+              echo
+              echo "Done"
+      {{- if .Values.adminWeb.resources }}
+          resources: {{- toYaml .Values.adminWeb.resources | nindent 12 }}
+      {{- end }}
+        - name: check-kotlin-compiler
+          image: {{ include "initContainer.image" . }}
+          {{- if .Values.global.initContainerImage.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.global.initContainerImage.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          command:
+            - sh
+            - -c
+            - |-
+              OK=0
+              echo "Checking kotlin-compiler port"
+              while [ $OK != 1 ]; do
+                  echo -n "."
+                  nc -z {{ .Release.Name }}-kotlin-compiler 8080 2>&1 >/dev/null && OK=1 || sleep 1
+              done
+              echo
+              echo "Done"
+      {{- if .Values.adminWeb.resources }}
+          resources: {{- toYaml .Values.adminWeb.resources | nindent 12 }}
+      {{- end }}           
+      containers:
+        - name: admin-web
+          image: {{ include "adminWeb.image" . }}
+          {{- if .Values.adminWeb.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.adminWeb.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: admin-web
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /rest/admin/healthcheck
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 180
+            timeoutSeconds: 5 # Defaults to 1
+            periodSeconds: 20 # Defaults to 10
+            failureThreshold: 3 # Defaults to 3
+          volumeMounts:
+              - mountPath: /file-uploads
+                name: upload-volume  
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-admin-web-cfg
+           {{- if .Values.adminWeb.authCongifMap }} 
+            - configMapRef:
+                name: {{ .Values.adminWeb.authCongifMap }}
+           {{- end }}
+      {{- if .Values.adminWeb.resources }}
+          resources: {{- toYaml .Values.adminWeb.resources | nindent 14 }}
+      {{- end }}
+      volumes:
+        - name: upload-volume
+          emptyDir:
+            sizeLimit: 500Mi
+    {{- with .Values.adminWeb.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.adminWeb.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.adminWeb.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }} 

@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-bot-api-cfg'
+  labels:
+    app.kubernetes.io/name: bot-api
+    app.kubernetes.io/component: bot-api
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+    tock_mongo_url: '{{ template "urls.mongo" . }}'
+{{- if .Values.botApi.environment.tock_nlp_service_url }}
+    tock_nlp_service_url: '{{ tpl .Values.botApi.environment.tock_nlp_service_url . }}'
+{{- else }}
+    tock_nlp_service_url: 'http://{{ .Release.Name }}-nlp-api:8080'
+{{- end }}
+    tock_env: '{{ default "int" .Values.botApi.environment.tock_env }}'
+    tock_websocket_enabled: '{{ default "true" .Values.botApi.environment.tock_websocket_enabled }}'
+    tock_api_timout_in_s: '{{ default "10" .Values.botApi.environment.tock_api_timout_in_s }}'
+    tock_bot_api_timeout_in_ms: '{{ default "5000" .Values.botApi.environment.tock_bot_api_timeout_in_ms }}'
+    tock_web_sse: '{{ default "true" .Values.botApi.environment.tock_web_sse }}'
+    tock_web_use_default_cors_handler: '{{ default "true" .Values.botApi.environment.tock_web_use_default_cors_handler }}'
+    tock_web_use_default_cors_handler_url: '{{ default "*" .Values.botApi.environment.tock_web_use_default_cors_handler_url }}'
+    tock_web_use_default_cors_handler_with_credentials: '{{ default "false" .Values.botApi.environment.tock_web_use_default_cors_handler_with_credentials }}'
+    tock_web_use_default_cors_handler_allowed_methods: '{{ default "" .Values.botApi.environment.tock_web_use_default_cors_handler_allowed_methods }}'
+    tock_web_enable_markdown: '{{ default "false" .Values.botApi.environment.tock_web_enable_markdown }}'
+    tock_default_log_level: '{{ default "info" .Values.botApi.environment.tock_default_log_level }}'
+
+{{ if .Values.global.tockMongodbFront}}
+    tock_front_mongo_db: '{{ tpl .Values.global.tockMongodbFront . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbModel}}
+    tock_model_mongo_db: '{{ tpl .Values.global.tockMongodbModel . }}'
+{{- end }}
+{{ if .Values.global.tockMongdbCache}}
+    tock_cache_mongo_db: '{{ tpl .Values.global.tockMongdbCache . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbBot}}
+    tock_bot_mongo_db: '{{ tpl .Values.global.tockMongodbBot . }}'
+{{- end }}

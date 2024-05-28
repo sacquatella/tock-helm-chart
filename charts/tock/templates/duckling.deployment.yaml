@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ .Release.Name }}-duckling'
+  labels:
+    app.kubernetes.io/name: duckling
+    app.kubernetes.io/component: duckling
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.duckling.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: duckling
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/resource: deployment
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: duckling
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/resource: deployment
+    spec:
+      {{- include "duckling.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.duckling.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.duckling.podSecurityContext "enabled" | toYaml | nindent 10 }}
+      {{- end }}
+      containers:
+        - name: duckling
+          image: {{ include "duckling.image" . }}
+          {{- if .Values.duckling.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.duckling.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: duckling
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 180
+            timeoutSeconds: 5 # Defaults to 1
+            periodSeconds: 20 # Defaults to 10
+            failureThreshold: 3 # Defaults to 3
+          envFrom:
+            - configMapRef:
+                name: '{{ .Release.Name }}-duckling-cfg'
+      {{- if .Values.duckling.resources }}
+          resources: {{- toYaml .Values.duckling.resources | nindent 14 }}
+      {{- end }}
+    {{- with .Values.duckling.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.duckling.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.duckling.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

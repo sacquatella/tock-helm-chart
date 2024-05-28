@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-nlp-api-cfg'
+  labels:
+    app.kubernetes.io/name: nlp-api
+    app.kubernetes.io/component: nlp-api
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+    tock_mongo_url: '{{ template "urls.mongo" . }}'
+{{- if .Values.nlpApi.environment.nlp_duckling_url }}
+    nlp_duckling_url: '{{ tpl .Values.nlpApi.environment.nlp_duckling_url . }}'
+{{- else }}
+    nlp_duckling_url: 'http://{{ .Release.Name }}-duckling:8080'
+{{- end }}
+    tock_env: '{{ default "prod" .Values.nlpApi.environment.tock_env }}'
+    tock_web_use_default_cors_handler: '{{ default "true" .Values.nlpApi.environment.tock_web_use_default_cors_handler }}'
+    tock_web_use_default_cors_handler_url: '{{ default "*" .Values.nlpApi.environment.tock_web_use_default_cors_handler_url }}'
+    tock_web_use_default_cors_handler_with_credentials: '{{ default "false" .Values.nlpApi.environment.tock_web_use_default_cors_handler_with_credentials }}'
+    tock_web_use_default_cors_handler_allowed_methods: '{{ default "GET, POST, PUT, DELETE, OPTIONS" .Values.nlpApi.environment.tock_web_use_default_cors_handler_allowed_methods }}'
+    tock_default_log_level: '{{ default "info" .Values.nlpApi.environment.tock_default_log_level }}'
+{{ if .Values.global.tockMongodbFront}}
+    tock_front_mongo_db: '{{ tpl .Values.global.tockMongodbFront . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbModel}}
+    tock_model_mongo_db: '{{ tpl .Values.global.tockMongodbModel . }}'
+{{- end }}
+{{ if .Values.global.tockMongdbCache}}
+    tock_cache_mongo_db: '{{ tpl .Values.global.tockMongdbCache . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbBot}}
+    tock_bot_mongo_db: '{{ tpl .Values.global.tockMongodbBot . }}'
+{{- end }}

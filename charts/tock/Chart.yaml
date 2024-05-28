@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: 23.9.2
+description: A helm chart for Tock. Tock is an open conversational AI platform. It's a complete solution to build conversational agents aka bots.Tock can integrate and experiment with both classic and Generative AI (LLM, RAG) models
+name: tock
+type: application
+version: 0.3.4
+
+dependencies:
+- name: mongodb
+  version: 13.6.8
+  #version: 14.8.3
+  repository : https://charts.bitnami.com/bitnami
+  condition: global.deployMongoDb.enabled
+  tags: 
+    - mongodb

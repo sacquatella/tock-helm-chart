@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-build-worker-cfg'
+  labels:
+    app.kubernetes.io/name:  build-worker
+    app.kubernetes.io/component:  build-worker
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+    tock_mongo_url: '{{ template "urls.mongo" . }}'
+    tock_env: '{{ default "prod" .Values.buildWorker.environment.tock_env }}'
+    JAVA_ARGS: '{{ default "-Xmx1g -XX:MaxMetaspaceSize=256m" .Values.buildWorker.environment.JAVA_ARGS }}'
+    tock_default_log_level: '{{ default "info" .Values.buildWorker.environment.tock_default_log_level }}'
+{{ if .Values.global.tockMongodbFront}}
+    tock_front_mongo_db: '{{ tpl .Values.global.tockMongodbFront . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbModel}}
+    tock_model_mongo_db: '{{ tpl .Values.global.tockMongodbModel . }}'
+{{- end }}
+{{ if .Values.global.tockMongdbCache}}
+    tock_cache_mongo_db: '{{ tpl .Values.global.tockMongdbCache . }}'
+{{- end }}
+{{ if .Values.global.tockMongodbBot}}
+    tock_bot_mongo_db: '{{ tpl .Values.global.tockMongodbBot . }}'
+{{- end }}

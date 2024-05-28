@@ -1,0 +1,32 @@
+{{- if .Values.botApi.ingress.enabled -}}
+{{- if not .Values.botApi.ingress.deprecated -}}
+{{- $ingressPath := .Values.botApi.ingress.path -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: '{{ .Release.Name }}-bot-api'
+  labels:
+    app.kubernetes.io/name: bot-api
+    app.kubernetes.io/component: bot-api
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.botApi.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  rules:
+    - host: bot-api-{{ .Release.Name }}.{{ .Values.global.wildcardDomain }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            pathType: Prefix
+            backend:
+              service: 
+                name: {{ .Release.Name }}-bot-api
+                port:
+                    number: 8080
+{{- end }}
+{{- end }}
