@@ -68,9 +68,9 @@ global:
       runAsGroup: 99
       runAsNonRoot: true
   
-# ----------------------------------------------
-# -- AdminWeb Settings
-# ----------------------------------------------
+# ==============================================
+#  AdminWeb Settings
+# ==============================================
 adminWeb:
   environment:
     # -- botadminverticle_body_limit
@@ -134,16 +134,16 @@ adminWeb:
     # -- Docker image tag
     # @section -- adminWeb
     tag: 23.9.2
-    ## -- Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ## # @section -- adminWeb
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- adminWeb
     pullSecrets: []
 
-  ## -- Configure Container Security Context
+  # -- Configure Container Security Context
   containerSecurityContext:
       # -- Configure containers' Security Context
       # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -183,6 +183,7 @@ adminWeb:
     # @section -- adminWeb
     enabled: true
     # -- set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1)
+    # @section -- adminWeb
     deprecated: false
     # -- ingress annotations
     # annotations:
@@ -230,15 +231,16 @@ adminWeb:
   # @section -- adminWeb
   affinity: {} # affinity
 
-# ----------------------------------------------
+# ==============================================
 #  BotApi Settings
-# ----------------------------------------------
+# ==============================================
 botApi:
   environment:
     # -- tock environment (prod, dev, integ)
     # @section -- botApi
     tock_env: integ
     # -- bot api log level
+    # @section -- botApi
     tock_default_log_level: info
 #    tock_nlp_service_url: http://nlp-api:8080
 #    tock_web_use_default_cors_handler: "true"
@@ -251,55 +253,84 @@ botApi:
 #    tock_web_enable_markdown_in_text_message: "true"
 #    tock_api_timout_in_s: "10" # timeout in seconds for websocket service, default is 10
 #    tock_bot_api_timeout_in_ms: "10000" # timeout in milliseconds for webhook service, default is 5000L
-  replicas: 1 # should be > 1 in production
+  # -- should be > 1 in production
+  # @section -- botApi
+  replicas: 1 
   image:
+    # -- Docker image registry
+    # @section -- botApi
     registry: docker.io
     repository: tock/bot_api # docker image name
-    tag: 23.9.2 #
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
+    tag: 23.9.2
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- botApi
     pullSecrets: []
 
-  ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param containerSecurityContext.enabled Enabled bot_api containers' Security Context
-  ## @param containerSecurityContext.runAsUser Set bot_api containers' Security Context runAsUser
   containerSecurityContext:
+      # -- Configure Container Security Context
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      # @section -- botApi
       enabled: true
+      # -- Run as non root
+      # @section -- botApi
       runAsNonRoot: true
+      # -- Run as user id
+      # @section -- botApi
       runAsUser: 99
+      # -- Run as Group id
+      # @section -- botApi
       runAsGroup: 99
 
   podSecurityContext:
+    # -- Configure Pod Security Context
+    # @section -- botApi
     enabled: true
+    # -- fsGroup
+    # @section -- botApi
     fsGroup: 99
+    # -- sysctls
+    # @section -- botApi
     sysctls: []
 
   service:
-    type: ClusterIP # kubernetes service type
-    port: 8080 # kubernetes service port
+    # -- kubernetes service type
+    # @section -- botApi
+    type: ClusterIP
+    # -- kubernetes service port
+    # @section -- botApi
+    port: 8080 
   
   ingress:
-    enabled: true # enable the ingress
+    # --  enable bot api the ingress
+    # @section -- botApi
+    enabled: true
+    # -- set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1)
+    # @section -- botApi
     deprecated: false  # set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1)
+    # -- annotations:
+    # kubernetes.io/ingress.class: traefik
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # @section -- botApi
     annotations: {} # ingress annotations
-    #annotations:
-    #   kubernetes.io/ingress.class: traefik
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    path: / # ingress path
+    # -- ingress path
+    # @section -- botApi
+    path: /
     #hosts:
     #  - chart-example.local
-    tls: [] # TLS secrets and which hosts they sould be use for
+
+    # -- TLS secrets and which hosts they sould be use for
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-
+    # @section -- botApi
+    tls: [] 
+   
   ## botApi resource requests and limits
   ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
   ## @param resources.limits The resources limits for the haproxy containers
@@ -315,9 +346,9 @@ botApi:
 
   affinity: {} # affinity
 
-# ----------------------------------------------
+# ==============================================
 #  BuildWorker Settings
-# ----------------------------------------------
+# ==============================================
 # @raw
 # @section -- buildWorker
 buildWorker:
@@ -368,9 +399,9 @@ buildWorker:
 
   affinity: {} # affinity
 
-# ----------------------------------------------
+# ==============================================
 #  Duckling Settings
-# ----------------------------------------------
+# ==============================================
 
 duckling:
   environment:
@@ -422,9 +453,9 @@ duckling:
   affinity: {} # affinity
 
 
-# ----------------------------------------------
+# ==============================================
 #  KotlinCompiler Settings
-# ----------------------------------------------
+# ==============================================
 # @section -- kotlinCompiler
 kotlinCompiler:
   environment:
@@ -476,9 +507,9 @@ kotlinCompiler:
   affinity: {} # affinity
 
 
-# ----------------------------------------------
+# ==============================================
 #  NlpApi Settings
-# ----------------------------------------------
+# ==============================================
 # @section -- nlpApi
 nlpApi:
   environment:
@@ -534,10 +565,10 @@ nlpApi:
   affinity: {} # affinity
 
 
-# ----------------------------------------------
+# ==============================================
 # MongoDB Settings
 # Bitnami 13.6.8
-# ----------------------------------------------
+# ==============================================
 # @section -- mongodb
 mongodb:
   architecture: "replicaset"

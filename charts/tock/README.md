@@ -4,20 +4,24 @@ A helm chart for Tock. Tock is an open conversational AI platform. It's a comple
 
 ![Version: 0.3.4](https://img.shields.io/badge/Version-0.3.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 23.9.2](https://img.shields.io/badge/AppVersion-23.9.2-informational?style=flat-square)
 
+## DLDR
+
+To install the chart with the release name `my-release`:
+
+```console
+$ helm registry login -u myuser registry.hub.docker.com
+$ helm install my-release  oci://registry.hub.docker.com/onelans/tock-helm/tock --version 0.3.4
+```
+
+## Introduction
+
+This chart helps to setup a Tock environnement.
+
 ## Requirements
 
 | Repository | Name | Version |
 |------------|------|---------|
 | https://charts.bitnami.com/bitnami | mongodb | 13.6.8 |
-
-## Installing the Chart
-
-To install the chart with the release name `my-release`:
-
-```console
-$ helm repo add foo-bar http://charts.foo-bar.com
-$ helm install my-release foo-bar/tock
-```
 
 ## Sections
 
@@ -30,7 +34,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | adminWeb.affinity | object | `{}` | affinity |
-| adminWeb.authCongifMap | string | `""` | Authentification configurations, set confimap name. Athentication configurations . Add the configuration in the form of key value pair in a configmap. If authCongifMap is not set default values are used. ref: https://doc.tock.ai/tock/fr/admin/securite/ ` apiVersion: v1  kind: ConfigMap  metadata:    name: admin-web-auth-cfg  labels:    app.kubernetes.io/name: admin-web-auth    app.kubernetes.io/component: admin-web    data:      tock_users:  "alice@tock.ai,bob@tock.ai" # Identifiants (séparés par des virgules). Valeur par defaut `admin@app.com`      tock_passwords: "secret1,secret2" # Mots de passe (séparés par des virgules). Valleur par defaut `password``       tock_organizations: "tock,tock" # Organisations (séparées par des virgules). Valleur par defaut `app``      tock_roles: "botUser,nlpUser|botUser|admin|technicalAdmin" #  Rôles séparés par des | (puis par des virgules). Valeur par defaut vide ` Dans cet exemple, Alice a le rôle botUser, alors que Bob a tous les rôles. Pour définir l'identité et les rôles de plusieurs utilisateurs, on sépare les valeurs par des virgules. |
+| adminWeb.authCongifMap | string | `""` | Authentification configurations, set confimap name. Add the configuration in the form of key value pair in a configmap. If authCongifMap is not set default values are used. ref: https://doc.tock.ai/tock/fr/admin/securite/ ` apiVersion: v1  kind: ConfigMap  metadata:    name: admin-web-auth-cfg  labels:    app.kubernetes.io/name: admin-web-auth    app.kubernetes.io/component: admin-web    data:      tock_users:  "alice@tock.ai,bob@tock.ai" # Identifiants (séparés par des virgules). Valeur par defaut `admin@app.com`      tock_passwords: "secret1,secret2" # Mots de passe (séparés par des virgules). Valleur par defaut `password``       tock_organizations: "tock,tock" # Organisations (séparées par des virgules). Valleur par defaut `app``      tock_roles: "botUser,nlpUser|botUser|admin|technicalAdmin" #  Rôles séparés par des | (puis par des virgules). Valeur par defaut vide ` Dans cet exemple, Alice a le rôle botUser, alors que Bob a tous les rôles. Pour définir l'identité et les rôles de plusieurs utilisateurs, on sépare les valeurs par des virgules. |
 | adminWeb.containerSecurityContext.enabled | bool | `true` | Configure containers' Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
 | adminWeb.containerSecurityContext.runAsGroup | int | `99` | Run as group id |
 | adminWeb.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
@@ -40,10 +44,12 @@ This creates values, but sectioned into own section tables if a section comment 
 | adminWeb.environment.tock_default_log_level | string | `"info"` | log level |
 | adminWeb.environment.tock_env | string | `"false"` | tock_env |
 | adminWeb.environment.tock_https_env | string | `"prod"` | Environment |
+| adminWeb.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
 | adminWeb.image.registry | string | `"docker.io"` | Docker image registry |
 | adminWeb.image.repository | string | `"tock/bot_admin"` | Docker docker image name |
 | adminWeb.image.tag | string | `"23.9.2"` | Docker image tag |
 | adminWeb.ingress.annotations | object | `{}` | ingress annotations annotations:  kubernetes.io/ingress.class: traefik  kubernetes.io/ingress.class: nginx  kubernetes.io/tls-acme: "true" |
+| adminWeb.ingress.deprecated | bool | `false` | set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1) |
 | adminWeb.ingress.enabled | bool | `true` | enable the ingress |
 | adminWeb.ingress.path | string | `"/"` | ingress path |
 | adminWeb.ingress.tls | list | `[]` | TLS secrets and which hosts they sould be use for  - secretName: chart-example-tls    hosts:      - chart-example.local |
@@ -62,13 +68,25 @@ This creates values, but sectioned into own section tables if a section comment 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| botApi.containerSecurityContext.enabled | bool | `true` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
+| botApi.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
+| botApi.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
+| botApi.containerSecurityContext.runAsUser | int | `99` | Run as user id |
+| botApi.environment.tock_default_log_level | string | `"info"` | bot api log level |
 | botApi.environment.tock_env | string | `"integ"` | tock environment (prod, dev, integ) |
-
-### buildWorker
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| buildWorker | object | `{"affinity":{},"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"environment":{"tock_env":"prod"},"image":{"pullSecrets":[],"registry":"docker.io","repository":"tock/build_worker","tag":"23.9.2"},"nodeSelector":{},"podSecurityContext":{"enabled":true,"fsGroup":99,"sysctls":[]},"resources":{"limits":{},"requests":{}},"tolerations":[]}` | -------------------------------------------- |
+| botApi.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
+| botApi.image.registry | string | `"docker.io"` | Docker image registry |
+| botApi.ingress.annotations | object | `{}` | annotations: kubernetes.io/ingress.class: traefik kubernetes.io/ingress.class: nginx kubernetes.io/tls-acme: "true" |
+| botApi.ingress.deprecated | bool | `false` | set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1) |
+| botApi.ingress.enabled | bool | `true` | enable bot api the ingress |
+| botApi.ingress.path | string | `"/"` | ingress path |
+| botApi.ingress.tls | list | `[]` | TLS secrets and which hosts they sould be use for  - secretName: chart-example-tls    hosts:      - chart-example.local |
+| botApi.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
+| botApi.podSecurityContext.fsGroup | int | `99` | fsGroup |
+| botApi.podSecurityContext.sysctls | list | `[]` | sysctls |
+| botApi.replicas | int | `1` | should be > 1 in production |
+| botApi.service.port | int | `8080` | kubernetes service port |
+| botApi.service.type | string | `"ClusterIP"` | kubernetes service type |
 
 ### Global
 
@@ -86,33 +104,101 @@ This creates values, but sectioned into own section tables if a section comment 
 | global.mongodbcheckfqdn | string | `"fqdn-node1"` | If mongoDB is not deployed by the chart, the node use to check if the mongodb is up |
 | global.wildcardDomain | string | `"rancher.localhost"` | Default domain used for ingress |
 
-### kotlinCompiler
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| kotlinCompiler | object | `{"affinity":{},"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"environment":{"tock_env":"prod","tock_kotlin_compiler_classpath":"/maven"},"image":{"pullSecrets":[],"registry":"docker.io","repository":"tock/kotlin_compiler","tag":"23.9.2"},"nodeSelector":{},"podSecurityContext":{"enabled":true,"fsGroup":99,"sysctls":[]},"resources":{"limits":{},"requests":{}},"tolerations":[]}` | -------------------------------------------- |
-
-### mongodb
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| mongodb | object | `{"arbiter":{"enabled":false},"architecture":"replicaset","auth":{"enabled":false},"extraFlags":["--bind_ip_all"],"persistence":{"enabled":true,"size":"1Gi"},"replicaCount":3,"replicaSetConfigurationSettings":{"enabled":true},"replicaSetName":"tock"}` | -------------------------------------------- |
-
-### nlpApi
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| nlpApi | object | `{"affinity":{},"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"environment":{"tock_env":"prod","tock_web_use_default_cors_handler":"true","tock_web_use_default_cors_handler_url":"*","tock_web_use_default_cors_handler_with_credentials":"false"},"image":{"pullSecrets":[],"registry":"docker.io","repository":"tock/nlp_api","tag":"23.9.2"},"nodeSelector":{},"podSecurityContext":{"enabled":true,"fsGroup":99,"sysctls":[]},"replicas":1,"resources":{"limits":{},"requests":{}},"tolerations":[]}` | -------------------------------------------- |
-
 ### Other Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| adminWeb | object | `{"affinity":{},"authCongifMap":"","containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"environment":{"botadminverticle_base_href":"","botadminverticle_body_limit":"-1","tock_default_log_level":"info","tock_env":"false","tock_https_env":"prod"},"image":{"pullSecrets":[],"registry":"docker.io","repository":"tock/bot_admin","tag":"23.9.2"},"ingress":{"annotations":{},"deprecated":false,"enabled":true,"path":"/","tls":[]},"nodeSelector":{},"podSecurityContext":{"enabled":true,"fsGroup":99,"sysctls":[]},"replicas":1,"resources":{"limits":{},"requests":{}},"service":{"port":8080,"type":"ClusterIP"},"tolerations":[]}` | -------------------------------------------- |
-| adminWeb.ingress.deprecated | bool | `false` | set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1) |
-| botApi | object | `{"affinity":{},"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"environment":{"tock_default_log_level":"info","tock_env":"integ"},"image":{"pullSecrets":[],"registry":"docker.io","repository":"tock/bot_api","tag":"23.9.2"},"ingress":{"annotations":{},"deprecated":false,"enabled":true,"path":"/","tls":[]},"nodeSelector":{},"podSecurityContext":{"enabled":true,"fsGroup":99,"sysctls":[]},"replicas":1,"resources":{"limits":{},"requests":{}},"service":{"port":8080,"type":"ClusterIP"},"tolerations":[]}` | -------------------------------------------- |
-| botApi.environment.tock_default_log_level | string | `"info"` | bot api log level |
-| duckling | object | `{"affinity":{},"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"environment":{"tock_env":"prod"},"image":{"pullSecrets":[],"registry":"docker.io","repository":"tock/duckling","tag":"23.9.2"},"nodeSelector":{},"podSecurityContext":{"enabled":true,"fsGroup":99,"sysctls":[]},"replicas":1,"resources":{"limits":{},"requests":{}},"tolerations":[]}` | -------------------------------------------- |
+| adminWeb.containerSecurityContext | object | `{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99}` | Configure Container Security Context |
+| botApi.affinity | object | `{}` |  |
+| botApi.image.repository | string | `"tock/bot_api"` |  |
+| botApi.image.tag | string | `"23.9.2"` |  |
+| botApi.nodeSelector | object | `{}` |  |
+| botApi.resources.limits | object | `{}` |  |
+| botApi.resources.requests | object | `{}` |  |
+| botApi.tolerations | list | `[]` |  |
+| buildWorker.affinity | object | `{}` |  |
+| buildWorker.containerSecurityContext.enabled | bool | `true` |  |
+| buildWorker.containerSecurityContext.runAsGroup | int | `99` |  |
+| buildWorker.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| buildWorker.containerSecurityContext.runAsUser | int | `99` |  |
+| buildWorker.environment.tock_env | string | `"prod"` |  |
+| buildWorker.image.pullSecrets | list | `[]` |  |
+| buildWorker.image.registry | string | `"docker.io"` |  |
+| buildWorker.image.repository | string | `"tock/build_worker"` |  |
+| buildWorker.image.tag | string | `"23.9.2"` |  |
+| buildWorker.nodeSelector | object | `{}` |  |
+| buildWorker.podSecurityContext.enabled | bool | `true` |  |
+| buildWorker.podSecurityContext.fsGroup | int | `99` |  |
+| buildWorker.podSecurityContext.sysctls | list | `[]` |  |
+| buildWorker.resources.limits | object | `{}` |  |
+| buildWorker.resources.requests | object | `{}` |  |
+| buildWorker.tolerations | list | `[]` |  |
+| duckling.affinity | object | `{}` |  |
+| duckling.containerSecurityContext.enabled | bool | `true` |  |
+| duckling.containerSecurityContext.runAsGroup | int | `99` |  |
+| duckling.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| duckling.containerSecurityContext.runAsUser | int | `99` |  |
+| duckling.environment.tock_env | string | `"prod"` |  |
+| duckling.image.pullSecrets | list | `[]` |  |
+| duckling.image.registry | string | `"docker.io"` |  |
+| duckling.image.repository | string | `"tock/duckling"` |  |
+| duckling.image.tag | string | `"23.9.2"` |  |
+| duckling.nodeSelector | object | `{}` |  |
+| duckling.podSecurityContext.enabled | bool | `true` |  |
+| duckling.podSecurityContext.fsGroup | int | `99` |  |
+| duckling.podSecurityContext.sysctls | list | `[]` |  |
+| duckling.replicas | int | `1` |  |
+| duckling.resources.limits | object | `{}` |  |
+| duckling.resources.requests | object | `{}` |  |
+| duckling.tolerations | list | `[]` |  |
+| kotlinCompiler.affinity | object | `{}` |  |
+| kotlinCompiler.containerSecurityContext.enabled | bool | `true` |  |
+| kotlinCompiler.containerSecurityContext.runAsGroup | int | `99` |  |
+| kotlinCompiler.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| kotlinCompiler.containerSecurityContext.runAsUser | int | `99` |  |
+| kotlinCompiler.environment.tock_env | string | `"prod"` |  |
+| kotlinCompiler.environment.tock_kotlin_compiler_classpath | string | `"/maven"` |  |
+| kotlinCompiler.image.pullSecrets | list | `[]` |  |
+| kotlinCompiler.image.registry | string | `"docker.io"` |  |
+| kotlinCompiler.image.repository | string | `"tock/kotlin_compiler"` |  |
+| kotlinCompiler.image.tag | string | `"23.9.2"` |  |
+| kotlinCompiler.nodeSelector | object | `{}` |  |
+| kotlinCompiler.podSecurityContext.enabled | bool | `true` |  |
+| kotlinCompiler.podSecurityContext.fsGroup | int | `99` |  |
+| kotlinCompiler.podSecurityContext.sysctls | list | `[]` |  |
+| kotlinCompiler.resources.limits | object | `{}` |  |
+| kotlinCompiler.resources.requests | object | `{}` |  |
+| kotlinCompiler.tolerations | list | `[]` |  |
+| mongodb.arbiter.enabled | bool | `false` |  |
+| mongodb.architecture | string | `"replicaset"` |  |
+| mongodb.auth.enabled | bool | `false` |  |
+| mongodb.extraFlags[0] | string | `"--bind_ip_all"` |  |
+| mongodb.persistence.enabled | bool | `true` |  |
+| mongodb.persistence.size | string | `"1Gi"` |  |
+| mongodb.replicaCount | int | `3` |  |
+| mongodb.replicaSetConfigurationSettings.enabled | bool | `true` |  |
+| mongodb.replicaSetName | string | `"tock"` |  |
+| nlpApi.affinity | object | `{}` |  |
+| nlpApi.containerSecurityContext.enabled | bool | `true` |  |
+| nlpApi.containerSecurityContext.runAsGroup | int | `99` |  |
+| nlpApi.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| nlpApi.containerSecurityContext.runAsUser | int | `99` |  |
+| nlpApi.environment.tock_env | string | `"prod"` |  |
+| nlpApi.environment.tock_web_use_default_cors_handler | string | `"true"` |  |
+| nlpApi.environment.tock_web_use_default_cors_handler_url | string | `"*"` |  |
+| nlpApi.environment.tock_web_use_default_cors_handler_with_credentials | string | `"false"` |  |
+| nlpApi.image.pullSecrets | list | `[]` |  |
+| nlpApi.image.registry | string | `"docker.io"` |  |
+| nlpApi.image.repository | string | `"tock/nlp_api"` |  |
+| nlpApi.image.tag | string | `"23.9.2"` |  |
+| nlpApi.nodeSelector | object | `{}` |  |
+| nlpApi.podSecurityContext.enabled | bool | `true` |  |
+| nlpApi.podSecurityContext.fsGroup | int | `99` |  |
+| nlpApi.podSecurityContext.sysctls | list | `[]` |  |
+| nlpApi.replicas | int | `1` |  |
+| nlpApi.resources.limits | object | `{}` |  |
+| nlpApi.resources.requests | object | `{}` |  |
+| nlpApi.tolerations | list | `[]` |  |
 
 ## Deployment on arm64.
 It seems the native build of MongoDB requires AVX instructions at the processor level

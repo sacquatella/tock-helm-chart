@@ -1,0 +1,79 @@
+global:
+  wildcardDomain: mydomain.org
+  clusterDomain: md.local
+  NetworkPolicy: 
+    enabled: true
+  deployMongoDb:
+    enabled: false
+
+  # replace x.x.x.x with mongodb node ip's and xxxxx:xxxxxxx by mongodb user/pass
+  mongodbUrls: mongodb://xxxxxxxx:xxxxxxx@x.x.x.x:27017,x.x.x.x:27017,x.x.x.x:27017/mydb1?replicaSet=rs0
+  mongodbcheckfqdn: x.x.x.x
+  tockMongodbFront: "mydb1"
+  tockMongodbModel: "mydb2"
+  tockMongdbCache: "mydb3"
+  tockMongodbBot: "mydb4"
+    
+botApi:
+  ingress:
+    enabled: true
+    deprecated: true
+ 
+  resources: 
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+nlpApi:
+  resources: 
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+adminWeb:
+  ingress:
+    enabled: true
+    deprecated: true
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+  authCongifMap: "admin-web-auth-cfg"
+  resources: 
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+
+buildWorker:
+  resources: 
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+
+kotlinCompiler:
+  resources: 
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+duckling:
+  resources: 
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 1000m
+      memory: 1Gi

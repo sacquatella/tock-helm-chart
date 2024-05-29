@@ -3,18 +3,23 @@
 
 {{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
 
-{{ template "chart.requirementsSection" . }}
 
-## Installing the Chart
+
+## DLDR
 
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add foo-bar http://charts.foo-bar.com
-$ helm install my-release foo-bar/{{ template "chart.name" . }}
+$ helm registry login -u myuser registry.hub.docker.com 
+$ helm install my-release  oci://registry.hub.docker.com/onelans/tock-helm/{{ template "chart.name" . }} --version 0.3.4
 ```
 
+## Introduction
 
+This chart helps to setup a Tock environnement. 
+
+
+{{ template "chart.requirementsSection" . }}
 
 ## Sections
 
