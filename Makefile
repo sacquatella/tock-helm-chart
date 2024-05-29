@@ -21,3 +21,9 @@ build:
 	helm lint ${CHART}
 	echo "Chart Name:Tock Application Version:${appversion}  Chart Version:${chartversion} "
 	helm package ${CHART} --version ${chartversion} --app-version ${appversion} --destination packages
+
+doc:
+	helm-docs -c ${CHART}
+
+publish:
+	helm push packages/tock-${chartversion}.tgz oci://registry.hub.docker.com/onelans

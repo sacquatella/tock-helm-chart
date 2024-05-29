@@ -10,7 +10,7 @@ To install the chart with the release name `my-release`:
 
 ```console
 $ helm registry login -u myuser registry.hub.docker.com
-$ helm install my-release oci://registry.hub.docker.com/onelans/tock --version 0.3.4
+$ helm install my-release  oci://registry.hub.docker.com/onelans/tock --version 0.3.4
 ```
 
 ## Introduction
@@ -94,7 +94,7 @@ This creates values, but sectioned into own section tables if a section comment 
 |-----|------|---------|-------------|
 | global.NetworkPolicy.enabled | bool | `false` | Enable creation of NetworkPolicy resources |
 | global.clusterDomain | string | `"cluster.local"` | Default Kubernetes cluster domain |
-| global.deployMongoDb.enabled | bool | `false` | If true Deploy MongoDB subchart |
+| global.deployMongoDb.enabled | bool | `true` | If true Deploy MongoDB subchart |
 | global.imagePullSecrets | list | `[]` | Glocal Image pull secret E.g. imagePullSecrets:   - myRegistryKeySecretName  |
 | global.imageRegistry | string | `""` | Global Docker image registry |
 | global.initContainerImage | object | `{"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"pullPolicy":"IfNotPresent","pullSecrets":[],"registry":"docker.io","repository":"busybox","tag":"1.36.1"}` | initcontainer images |
@@ -200,7 +200,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | nlpApi.resources.requests | object | `{}` |  |
 | nlpApi.tolerations | list | `[]` |  |
 
-## Deployment on arm64 and on processor without AVX.
+## Deployment on arm64.
 It seems the native build of MongoDB requires AVX instructions at the processor level
 
 https://github.com/bitnami/charts/issues/12834
