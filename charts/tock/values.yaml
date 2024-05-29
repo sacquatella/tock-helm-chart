@@ -16,7 +16,7 @@ global:
   deployMongoDb:
     # -- If true Deploy MongoDB subchart
     # @section -- Global
-    enabled: false
+    enabled: true
   # -- If mongoDB is not deployed by the chart, you can use this to connect to an external mongoDB
   # @section -- Global
   #mongodbUrls: mongodb://myuser:mypass@fqdn-node1:27017,fqdn-node2:27017,fqdn-node3:27017/mydb?replicaSet=rs0

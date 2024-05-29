@@ -10,7 +10,7 @@ To install the chart with the release name `my-release`:
 
 ```console
 $ helm registry login -u myuser registry.hub.docker.com
-$ helm install my-release  oci://registry.hub.docker.com/onelans/tock-helm/tock --version 0.3.4
+$ helm install my-release oci://registry.hub.docker.com/onelans/tock --version 0.3.4
 ```
 
 ## Introduction
@@ -200,7 +200,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | nlpApi.resources.requests | object | `{}` |  |
 | nlpApi.tolerations | list | `[]` |  |
 
-## Deployment on arm64.
+## Deployment on arm64 and on processor without AVX.
 It seems the native build of MongoDB requires AVX instructions at the processor level
 
 https://github.com/bitnami/charts/issues/12834
