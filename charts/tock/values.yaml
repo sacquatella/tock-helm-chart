@@ -98,7 +98,7 @@ adminWeb:
     # tock_web_use_default_cors_handler: "true"
     
   
-  # -- Authentification configurations, set confimap name.
+  
   # Add the configuration in the form of key value pair in a configmap.
   # If authCongifMap is not set default values are used.
   # ref: https://doc.tock.ai/tock/fr/admin/securite/
@@ -118,12 +118,14 @@ adminWeb:
   # `
   # Dans cet exemple, Alice a le rôle botUser, alors que Bob a tous les rôles.
   # Pour définir l'identité et les rôles de plusieurs utilisateurs, on sépare les valeurs par des virgules.
+  # -- Authentification configurations, set confimap name. cf README to have a sample.
   # @section -- adminWeb
   authCongifMap: ""
 
   # -- Replication settings, should be = 1 in production
   # @section -- adminWeb
   replicas: 1 # should be = 1 in production
+  
   image:
     # -- Docker image registry
     # @section -- adminWeb
@@ -143,7 +145,6 @@ adminWeb:
     # @section -- adminWeb
     pullSecrets: []
 
-  # -- Configure Container Security Context
   containerSecurityContext:
       # -- Configure containers' Security Context
       # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
@@ -182,9 +183,11 @@ adminWeb:
     # -- enable the ingress
     # @section -- adminWeb
     enabled: true
+    
     # -- set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1)
     # @section -- adminWeb
     deprecated: false
+    
     # -- ingress annotations
     # annotations:
     #  kubernetes.io/ingress.class: traefik
@@ -242,17 +245,40 @@ botApi:
     # -- bot api log level
     # @section -- botApi
     tock_default_log_level: info
-#    tock_nlp_service_url: http://nlp-api:8080
-#    tock_web_use_default_cors_handler: "true"
-#    tock_web_use_default_cors_handler_url: '*'
-#    tock_web_use_default_cors_handler_with_credentials: "false"
-#    tock_websocket_enabled: "true"
-#    tock_web_use_default_cors_handler_allowed_methods : "GET, POST, PUT, DELETE, OPTIONS, HEAD"
-#    tock_web_use_default_cors_handler_allowed_headers : "Content-Type, Authorization, Content-Length, X-Requested-With"
-#    tock_web_enable_markdown: "true"
-#    tock_web_enable_markdown_in_text_message: "true"
-#    tock_api_timout_in_s: "10" # timeout in seconds for websocket service, default is 10
-#    tock_bot_api_timeout_in_ms: "10000" # timeout in milliseconds for webhook service, default is 5000L
+    # -- CORS handler
+    # @section -- botApi
+    tock_web_use_default_cors_handler: "true"
+    # -- CORS handler URL
+    # @section -- botApi
+    tock_web_use_default_cors_handler_url: '*'
+    # -- CORS handler with credentials
+    # @section -- botApi
+    tock_web_use_default_cors_handler_with_credentials: "false"
+    # -- Enable websocket
+    # @section -- botApi
+    tock_websocket_enabled: "true"
+    # -- CORS handler allowed methods
+    # Slould be set to "GET, POST, PUT, DELETE, OPTIONS, HEAD"
+    # @section -- botApi
+    tock_web_use_default_cors_handler_allowed_methods : ""
+    # -- Enable markdown
+    # @section -- botApi
+    tock_web_enable_markdown: "false"
+    # -- Enable Server Sent Event
+    # @section -- botApi
+    tock_web_sse: true
+    # -- Timeout in seconds for websocket service, default is 10
+    # @section -- botApi
+    tock_api_timout_in_s: "10" 
+    # -- Timeout in milliseconds for webhook service, default is 5000
+    # @section -- botApi
+    tock_bot_api_timeout_in_ms: "5000"
+  # Sould be tested
+  # tock_web_enable_markdown_in_text_message: "true"
+  # Computer by the chart if not set
+  #  tock_web_use_default_cors_handler_allowed_headers : "Content-Type, Authorization, Content-Length, X-Requested-With"
+  #  tock_nlp_service_url: http://nlp-api:8080
+  
   # -- should be > 1 in production
   # @section -- botApi
   replicas: 1 
@@ -260,7 +286,11 @@ botApi:
     # -- Docker image registry
     # @section -- botApi
     registry: docker.io
+    # -- Docker image name
+    # @section -- botApi
     repository: tock/bot_api # docker image name
+    # -- Docker image tag
+    # @section -- botApi
     tag: 23.9.2
     # -- Optionally specify an array of imagePullSecrets.
     # Secrets must be manually created in the namespace.
@@ -331,19 +361,23 @@ botApi:
     # @section -- botApi
     tls: [] 
    
-  ## botApi resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param resources.limits The resources limits for the haproxy containers
-  ## @param resources.requests The requested resources for the haproxy containers
-  ##
+  # -- botApi resource requests and limits
+  # ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  # @section -- botApi
   resources: # resources limits and request
     limits: {} # resources limits
     requests: {}  # resources requests
 
-  nodeSelector: {} # node selector
+  # -- node selector
+  # @section -- botApi
+  nodeSelector: {} 
 
-  tolerations: [] # tolerations
-
+  # -- tolerations
+  # @section -- botApi
+  tolerations: [] 
+  
+  # -- affinity
+  # @section -- botApi
   affinity: {} # affinity
 
 # ==============================================
