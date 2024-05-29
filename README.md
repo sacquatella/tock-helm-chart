@@ -23,3 +23,5 @@ You will find more information on chart parameters at the helm chart [README](ch
 ## What is deployed 
 
 The chart deploy all tock components. It's able also to deploy a mongodb database (Bitnami mongoDb chart is used as subchart) or use an existing mongodb backend.
+
+![Tock on K8S](plantuml-img.png)
