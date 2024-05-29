@@ -34,7 +34,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | adminWeb.affinity | object | `{}` | affinity |
-| adminWeb.authCongifMap | string | `""` | Authentification configurations, set confimap name. Add the configuration in the form of key value pair in a configmap. If authCongifMap is not set default values are used. ref: https://doc.tock.ai/tock/fr/admin/securite/ ` apiVersion: v1  kind: ConfigMap  metadata:    name: admin-web-auth-cfg  labels:    app.kubernetes.io/name: admin-web-auth    app.kubernetes.io/component: admin-web    data:      tock_users:  "alice@tock.ai,bob@tock.ai" # Identifiants (séparés par des virgules). Valeur par defaut `admin@app.com`      tock_passwords: "secret1,secret2" # Mots de passe (séparés par des virgules). Valleur par defaut `password``       tock_organizations: "tock,tock" # Organisations (séparées par des virgules). Valleur par defaut `app``      tock_roles: "botUser,nlpUser|botUser|admin|technicalAdmin" #  Rôles séparés par des | (puis par des virgules). Valeur par defaut vide ` Dans cet exemple, Alice a le rôle botUser, alors que Bob a tous les rôles. Pour définir l'identité et les rôles de plusieurs utilisateurs, on sépare les valeurs par des virgules. |
+| adminWeb.authCongifMap | string | `""` | Authentification configurations, set confimap name. cf README to have a sample. |
 | adminWeb.containerSecurityContext.enabled | bool | `true` | Configure containers' Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
 | adminWeb.containerSecurityContext.runAsGroup | int | `99` | Run as group id |
 | adminWeb.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
@@ -68,25 +68,40 @@ This creates values, but sectioned into own section tables if a section comment 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| botApi.affinity | object | `{}` | affinity |
 | botApi.containerSecurityContext.enabled | bool | `true` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
 | botApi.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
 | botApi.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
 | botApi.containerSecurityContext.runAsUser | int | `99` | Run as user id |
+| botApi.environment.tock_api_timout_in_s | string | `"10"` | Timeout in seconds for websocket service, default is 10 |
+| botApi.environment.tock_bot_api_timeout_in_ms | string | `"5000"` | Timeout in milliseconds for webhook service, default is 5000 |
 | botApi.environment.tock_default_log_level | string | `"info"` | bot api log level |
 | botApi.environment.tock_env | string | `"integ"` | tock environment (prod, dev, integ) |
+| botApi.environment.tock_web_enable_markdown | string | `"false"` | Enable markdown |
+| botApi.environment.tock_web_sse | bool | `true` | Enable Server Sent Event |
+| botApi.environment.tock_web_use_default_cors_handler | string | `"true"` | CORS handler |
+| botApi.environment.tock_web_use_default_cors_handler_allowed_methods | string | `""` | CORS handler allowed methods Slould be set to "GET, POST, PUT, DELETE, OPTIONS, HEAD" |
+| botApi.environment.tock_web_use_default_cors_handler_url | string | `"*"` | CORS handler URL |
+| botApi.environment.tock_web_use_default_cors_handler_with_credentials | string | `"false"` | CORS handler with credentials |
+| botApi.environment.tock_websocket_enabled | string | `"true"` | Enable websocket |
 | botApi.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
 | botApi.image.registry | string | `"docker.io"` | Docker image registry |
+| botApi.image.repository | string | `"tock/bot_api"` | Docker image name |
+| botApi.image.tag | string | `"23.9.2"` | Docker image tag |
 | botApi.ingress.annotations | object | `{}` | annotations: kubernetes.io/ingress.class: traefik kubernetes.io/ingress.class: nginx kubernetes.io/tls-acme: "true" |
 | botApi.ingress.deprecated | bool | `false` | set to true for deployement on cluster version < 1.19 (apiVersion: networking.k8s.io/v1beta1 vs apiVersion: networking.k8s.io/v1) |
 | botApi.ingress.enabled | bool | `true` | enable bot api the ingress |
 | botApi.ingress.path | string | `"/"` | ingress path |
 | botApi.ingress.tls | list | `[]` | TLS secrets and which hosts they sould be use for  - secretName: chart-example-tls    hosts:      - chart-example.local |
+| botApi.nodeSelector | object | `{}` | node selector |
 | botApi.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
 | botApi.podSecurityContext.fsGroup | int | `99` | fsGroup |
 | botApi.podSecurityContext.sysctls | list | `[]` | sysctls |
 | botApi.replicas | int | `1` | should be > 1 in production |
+| botApi.resources | object | `{"limits":{},"requests":{}}` | botApi resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
 | botApi.service.port | int | `8080` | kubernetes service port |
 | botApi.service.type | string | `"ClusterIP"` | kubernetes service type |
+| botApi.tolerations | list | `[]` | tolerations |
 
 ### Global
 
@@ -108,14 +123,6 @@ This creates values, but sectioned into own section tables if a section comment 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| adminWeb.containerSecurityContext | object | `{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99}` | Configure Container Security Context |
-| botApi.affinity | object | `{}` |  |
-| botApi.image.repository | string | `"tock/bot_api"` |  |
-| botApi.image.tag | string | `"23.9.2"` |  |
-| botApi.nodeSelector | object | `{}` |  |
-| botApi.resources.limits | object | `{}` |  |
-| botApi.resources.requests | object | `{}` |  |
-| botApi.tolerations | list | `[]` |  |
 | buildWorker.affinity | object | `{}` |  |
 | buildWorker.containerSecurityContext.enabled | bool | `true` |  |
 | buildWorker.containerSecurityContext.runAsGroup | int | `99` |  |
@@ -200,7 +207,40 @@ This creates values, but sectioned into own section tables if a section comment 
 | nlpApi.resources.requests | object | `{}` |  |
 | nlpApi.tolerations | list | `[]` |  |
 
-## Deployment on arm64.
+## Authentification configurations
+
+The following sample clould be added as ConfigMap to configure the authentication of the admin web interface.
+
+To use it , you have to apply the following ConfigMap to your cluster.
+
+```console
+$ kubectl apply -f ./admin-web-auth-cfg.yaml
+```
+
+And set in your values file `adminWeb.authCongifMap` to `admin-web-auth-cfg` (configmap name)
+
+`admin-web-auth-cfg.yaml`
+
+```yaml
+apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: admin-web-auth-cfg
+    labels:
+      app.kubernetes.io/name: admin-web-auth
+      app.kubernetes.io/component: admin-web
+    data:
+      tock_users:  "alice@tock.ai,bob@tock.ai" # Credentials (separated by commas). Default value `admin@app.com`
+      tock_passwords: "secret1,secret2" # Password (separated by commas). Default value `password`
+      tock_organizations: "tock,tock" # Organizations (separated by commas). Default value `app``
+      tock_roles: "botUser,nlpUser|botUser|admin|technicalAdmin" #  Roles separated | (and then by commas). Default value is empty."
+ ```
+
+In this example, Alice has the role 'botUser', whereas Bob has all roles.
+To define the identities and roles of several users, separate their values with commas.
+
+## Deployment on arm64 and processor without AVX instructions
+
 It seems the native build of MongoDB requires AVX instructions at the processor level
 
 https://github.com/bitnami/charts/issues/12834
@@ -212,7 +252,7 @@ https://artifacthub.io/packages/helm/bitnami/mongodb/13.6.8
 ## Deployment sample on Rancher Desktop
 
 ```console
-$ helm install mytock charts/tock -f ./rancher-values.yaml
+$ helm install mytock oci://registry.hub.docker.com/onelans/tock --version 0.3.4 -f ./rancher-values.yaml
 ```
 
 `rancher-values.yaml`
