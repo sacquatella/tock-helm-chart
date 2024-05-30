@@ -383,55 +383,82 @@ botApi:
 # ==============================================
 #  BuildWorker Settings
 # ==============================================
-# @raw
-# @section -- buildWorker
 buildWorker:
   environment:
+    # -- tock environment (prod, dev, integ)
+    # @section -- buildWorker
     tock_env: prod
-#    JAVA_ARGS: -Xmx1g -XX:MaxMetaspaceSize=256m
-#    tock_default_log_level: info
+    # -- log level
+    # @section -- buildWorker
+    tock_default_log_level: info
+    # -- JAVA_ARGS
+    # @section -- buildWorker
+    JAVA_ARGS: -Xmx1g -XX:MaxMetaspaceSize=256m
+
   image:
+    # -- Docker image registry
+    # @section -- buildWorker
     registry: docker.io
-    repository: tock/build_worker # docker image name
+    # -- Docker image name
+    # @section -- buildWorker
+    repository: tock/build_worker
+    # -- Docker image tag
+    # @section -- buildWorker
     tag: 23.9.2 # docker image tag
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- buildWorker
     pullSecrets: []
 
-  ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param containerSecurityContext.enabled Enabled buildWorker containers' Security Context
-  ## @param containerSecurityContext.runAsUser Set buildWorker containers' Security Context runAsUser
+
   containerSecurityContext:
+      # -- Configure Container Security Context
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      # @section -- buildWorker
       enabled: true
+      # -- Run as non root
+      # @section -- buildWorker
       runAsNonRoot: true
+      # -- Run as user id
+      # @section -- buildWorker
       runAsUser: 99
+      # -- Run as Group id
+      # @section -- buildWorker
       runAsGroup: 99
 
   podSecurityContext:
+      # -- Configure Pod Security Context
+      # @section -- buildWorker
       enabled: true
+      # -- fsGroup
+      # @section -- buildWorker
       fsGroup: 99
+      # -- sysctls
+      # @section -- buildWorker
       sysctls: []
 
-  ## buildWorker resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param resources.limits The resources limits for the haproxy containers
-  ## @param resources.requests The requested resources for the haproxy containers
-  ##
+  # -- botApi resource requests and limits
+  # ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  # @section -- buildWorker
   resources: #resources limits and request
     limits: {} # resources limits
     requests: {}  # resources requests
 
-  nodeSelector: {} # node selector
+  # -- node selector
+  # @section -- buildWorker
+  nodeSelector: {}
 
-  tolerations: [] # tolerations
+  # -- tolerations
+  # @section -- buildWorker
+  tolerations: []
 
-  affinity: {} # affinity
+  # -- affinity
+  # @section -- buildWorker
+  affinity: {}
 
 # ==============================================
 #  Duckling Settings

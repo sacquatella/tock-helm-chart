@@ -103,6 +103,29 @@ This creates values, but sectioned into own section tables if a section comment 
 | botApi.service.type | string | `"ClusterIP"` | kubernetes service type |
 | botApi.tolerations | list | `[]` | tolerations |
 
+### buildWorker
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| buildWorker.affinity | object | `{}` | affinity |
+| buildWorker.containerSecurityContext.enabled | bool | `true` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
+| buildWorker.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
+| buildWorker.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
+| buildWorker.containerSecurityContext.runAsUser | int | `99` | Run as user id |
+| buildWorker.environment.JAVA_ARGS | string | `"-Xmx1g -XX:MaxMetaspaceSize=256m"` | JAVA_ARGS |
+| buildWorker.environment.tock_default_log_level | string | `"info"` | log level |
+| buildWorker.environment.tock_env | string | `"prod"` | tock environment (prod, dev, integ) |
+| buildWorker.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
+| buildWorker.image.registry | string | `"docker.io"` | Docker image registry |
+| buildWorker.image.repository | string | `"tock/build_worker"` | Docker image name |
+| buildWorker.image.tag | string | `"23.9.2"` | Docker image tag |
+| buildWorker.nodeSelector | object | `{}` | node selector |
+| buildWorker.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
+| buildWorker.podSecurityContext.fsGroup | int | `99` | fsGroup |
+| buildWorker.podSecurityContext.sysctls | list | `[]` | sysctls |
+| buildWorker.resources | object | `{"limits":{},"requests":{}}` | botApi resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
+| buildWorker.tolerations | list | `[]` | tolerations |
+
 ### Global
 
 | Key | Type | Default | Description |
@@ -123,23 +146,6 @@ This creates values, but sectioned into own section tables if a section comment 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| buildWorker.affinity | object | `{}` |  |
-| buildWorker.containerSecurityContext.enabled | bool | `true` |  |
-| buildWorker.containerSecurityContext.runAsGroup | int | `99` |  |
-| buildWorker.containerSecurityContext.runAsNonRoot | bool | `true` |  |
-| buildWorker.containerSecurityContext.runAsUser | int | `99` |  |
-| buildWorker.environment.tock_env | string | `"prod"` |  |
-| buildWorker.image.pullSecrets | list | `[]` |  |
-| buildWorker.image.registry | string | `"docker.io"` |  |
-| buildWorker.image.repository | string | `"tock/build_worker"` |  |
-| buildWorker.image.tag | string | `"23.9.2"` |  |
-| buildWorker.nodeSelector | object | `{}` |  |
-| buildWorker.podSecurityContext.enabled | bool | `true` |  |
-| buildWorker.podSecurityContext.fsGroup | int | `99` |  |
-| buildWorker.podSecurityContext.sysctls | list | `[]` |  |
-| buildWorker.resources.limits | object | `{}` |  |
-| buildWorker.resources.requests | object | `{}` |  |
-| buildWorker.tolerations | list | `[]` |  |
 | duckling.affinity | object | `{}` |  |
 | duckling.containerSecurityContext.enabled | bool | `true` |  |
 | duckling.containerSecurityContext.runAsGroup | int | `99` |  |
@@ -296,3 +302,38 @@ adminWeb:
 ```
 
 > The values file defines a MongoDB image that is compatible with macOS Arm
+
+## Deployment sample on GKE
+
+```console
+$ helm install mytock oci://registry.hub.docker.com/onelans/tock --version 0.3.4 -f ./gke-values.yaml
+```
+
+`gke-values.yaml`
+
+```yaml
+global:
+  wildcardDomain: gke.mydomain.com
+  deployMongoDb:
+    enabled: true
+
+botApi:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "gce"
+  service:
+    type: NodePort
+
+adminWeb:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "gce" 
+  service:
+    type: NodePort
+```
+
+> The values file defines the use of the GCE ingress controller
+> You can get the external IP of the ingress controller with the following command
+> `kubectl get ingress mytock-admin-web  --output yaml`

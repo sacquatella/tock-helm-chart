@@ -1,0 +1,20 @@
+global:
+  wildcardDomain: gke.mydomain.com
+  deployMongoDb:
+    enabled: true
+
+botApi:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "gce"
+  service:
+    type: NodePort
+
+adminWeb:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "gce"  
+  service:
+    type: NodePort

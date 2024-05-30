@@ -121,3 +121,38 @@ adminWeb:
 ```
 
 > The values file defines a MongoDB image that is compatible with macOS Arm
+
+## Deployment sample on GKE
+
+```console
+$ helm install mytock oci://registry.hub.docker.com/onelans/{{ template "chart.name" . }} --version 0.3.4 -f ./gke-values.yaml
+```
+
+`gke-values.yaml`
+
+```yaml
+global:
+  wildcardDomain: gke.mydomain.com
+  deployMongoDb:
+    enabled: true
+
+botApi:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "gce"
+  service:
+    type: NodePort
+
+adminWeb:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "gce"  
+  service:
+    type: NodePort
+```
+
+> The values file defines the use of the GCE ingress controller
+> You can get the external IP of the ingress controller with the following command
+> `kubectl get ingress mytock-admin-web  --output yaml`
