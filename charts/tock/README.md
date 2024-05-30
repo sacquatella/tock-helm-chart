@@ -123,8 +123,31 @@ This creates values, but sectioned into own section tables if a section comment 
 | buildWorker.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
 | buildWorker.podSecurityContext.fsGroup | int | `99` | fsGroup |
 | buildWorker.podSecurityContext.sysctls | list | `[]` | sysctls |
-| buildWorker.resources | object | `{"limits":{},"requests":{}}` | botApi resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
+| buildWorker.resources | object | `{"limits":{},"requests":{}}` | buildWorker resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
 | buildWorker.tolerations | list | `[]` | tolerations |
+
+### Duckling
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| duckling.affinity | object | `{}` | affinity |
+| duckling.containerSecurityContext.enabled | bool | `true` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
+| duckling.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
+| duckling.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
+| duckling.containerSecurityContext.runAsUser | int | `99` | Run as user id |
+| duckling.environment.tock_default_log_level | string | `"info"` | log level |
+| duckling.environment.tock_env | string | `"prod"` | tock environment (prod, dev, integ) |
+| duckling.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
+| duckling.image.registry | string | `"docker.io"` | Docker image registry |
+| duckling.image.repository | string | `"tock/duckling"` | Docker image name |
+| duckling.image.tag | string | `"23.9.2"` | Docker image tag |
+| duckling.nodeSelector | object | `{}` | node selector |
+| duckling.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
+| duckling.podSecurityContext.fsGroup | int | `99` | fsGroup |
+| duckling.podSecurityContext.sysctls | list | `[]` | sysctls |
+| duckling.replicas | string | `nil` | should be > 1 in production |
+| duckling.resources | object | `{"limits":{},"requests":{}}` | Duckling resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
+| duckling.tolerations | list | `[]` | tolerations |
 
 ### Global
 
@@ -142,76 +165,71 @@ This creates values, but sectioned into own section tables if a section comment 
 | global.mongodbcheckfqdn | string | `"fqdn-node1"` | If mongoDB is not deployed by the chart, the node use to check if the mongodb is up |
 | global.wildcardDomain | string | `"rancher.localhost"` | Default domain used for ingress |
 
-### Other Values
+### KotlinCompiler
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| duckling.affinity | object | `{}` |  |
-| duckling.containerSecurityContext.enabled | bool | `true` |  |
-| duckling.containerSecurityContext.runAsGroup | int | `99` |  |
-| duckling.containerSecurityContext.runAsNonRoot | bool | `true` |  |
-| duckling.containerSecurityContext.runAsUser | int | `99` |  |
-| duckling.environment.tock_env | string | `"prod"` |  |
-| duckling.image.pullSecrets | list | `[]` |  |
-| duckling.image.registry | string | `"docker.io"` |  |
-| duckling.image.repository | string | `"tock/duckling"` |  |
-| duckling.image.tag | string | `"23.9.2"` |  |
-| duckling.nodeSelector | object | `{}` |  |
-| duckling.podSecurityContext.enabled | bool | `true` |  |
-| duckling.podSecurityContext.fsGroup | int | `99` |  |
-| duckling.podSecurityContext.sysctls | list | `[]` |  |
-| duckling.replicas | int | `1` |  |
-| duckling.resources.limits | object | `{}` |  |
-| duckling.resources.requests | object | `{}` |  |
-| duckling.tolerations | list | `[]` |  |
-| kotlinCompiler.affinity | object | `{}` |  |
-| kotlinCompiler.containerSecurityContext.enabled | bool | `true` |  |
-| kotlinCompiler.containerSecurityContext.runAsGroup | int | `99` |  |
-| kotlinCompiler.containerSecurityContext.runAsNonRoot | bool | `true` |  |
-| kotlinCompiler.containerSecurityContext.runAsUser | int | `99` |  |
-| kotlinCompiler.environment.tock_env | string | `"prod"` |  |
-| kotlinCompiler.environment.tock_kotlin_compiler_classpath | string | `"/maven"` |  |
-| kotlinCompiler.image.pullSecrets | list | `[]` |  |
-| kotlinCompiler.image.registry | string | `"docker.io"` |  |
-| kotlinCompiler.image.repository | string | `"tock/kotlin_compiler"` |  |
-| kotlinCompiler.image.tag | string | `"23.9.2"` |  |
-| kotlinCompiler.nodeSelector | object | `{}` |  |
-| kotlinCompiler.podSecurityContext.enabled | bool | `true` |  |
-| kotlinCompiler.podSecurityContext.fsGroup | int | `99` |  |
-| kotlinCompiler.podSecurityContext.sysctls | list | `[]` |  |
-| kotlinCompiler.resources.limits | object | `{}` |  |
-| kotlinCompiler.resources.requests | object | `{}` |  |
-| kotlinCompiler.tolerations | list | `[]` |  |
-| mongodb.arbiter.enabled | bool | `false` |  |
-| mongodb.architecture | string | `"replicaset"` |  |
-| mongodb.auth.enabled | bool | `false` |  |
-| mongodb.extraFlags[0] | string | `"--bind_ip_all"` |  |
-| mongodb.persistence.enabled | bool | `true` |  |
-| mongodb.persistence.size | string | `"1Gi"` |  |
-| mongodb.replicaCount | int | `3` |  |
-| mongodb.replicaSetConfigurationSettings.enabled | bool | `true` |  |
-| mongodb.replicaSetName | string | `"tock"` |  |
-| nlpApi.affinity | object | `{}` |  |
-| nlpApi.containerSecurityContext.enabled | bool | `true` |  |
-| nlpApi.containerSecurityContext.runAsGroup | int | `99` |  |
-| nlpApi.containerSecurityContext.runAsNonRoot | bool | `true` |  |
-| nlpApi.containerSecurityContext.runAsUser | int | `99` |  |
-| nlpApi.environment.tock_env | string | `"prod"` |  |
-| nlpApi.environment.tock_web_use_default_cors_handler | string | `"true"` |  |
-| nlpApi.environment.tock_web_use_default_cors_handler_url | string | `"*"` |  |
-| nlpApi.environment.tock_web_use_default_cors_handler_with_credentials | string | `"false"` |  |
-| nlpApi.image.pullSecrets | list | `[]` |  |
-| nlpApi.image.registry | string | `"docker.io"` |  |
-| nlpApi.image.repository | string | `"tock/nlp_api"` |  |
-| nlpApi.image.tag | string | `"23.9.2"` |  |
-| nlpApi.nodeSelector | object | `{}` |  |
-| nlpApi.podSecurityContext.enabled | bool | `true` |  |
-| nlpApi.podSecurityContext.fsGroup | int | `99` |  |
-| nlpApi.podSecurityContext.sysctls | list | `[]` |  |
-| nlpApi.replicas | int | `1` |  |
-| nlpApi.resources.limits | object | `{}` |  |
-| nlpApi.resources.requests | object | `{}` |  |
-| nlpApi.tolerations | list | `[]` |  |
+| kotlinCompiler.affinity | object | `{}` | affinity |
+| kotlinCompiler.containerSecurityContext.enabled | bool | `true` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
+| kotlinCompiler.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
+| kotlinCompiler.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
+| kotlinCompiler.containerSecurityContext.runAsUser | int | `99` | Run as user id |
+| kotlinCompiler.environment.tock_default_log_level | string | `"info"` | log level |
+| kotlinCompiler.environment.tock_env | string | `"prod"` | tock environment (prod, dev, integ) |
+| kotlinCompiler.environment.tock_kotlin_compiler_classpath | string | `"/maven"` | compiler classpath |
+| kotlinCompiler.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
+| kotlinCompiler.image.registry | string | `"docker.io"` | Docker image registry |
+| kotlinCompiler.image.repository | string | `"tock/kotlin_compiler"` | Docker image name |
+| kotlinCompiler.image.tag | string | `"23.9.2"` | Docker image tag |
+| kotlinCompiler.nodeSelector | object | `{}` | node selector |
+| kotlinCompiler.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
+| kotlinCompiler.podSecurityContext.fsGroup | int | `99` | fsGroup |
+| kotlinCompiler.podSecurityContext.sysctls | list | `[]` | sysctls |
+| kotlinCompiler.resources | object | `{"limits":{},"requests":{}}` | KotlinCompiler resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
+| kotlinCompiler.tolerations | list | `[]` | tolerations |
+
+### mongodb
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| mongodb | object | `{"arbiter":{"enabled":false},"architecture":"replicaset","auth":{"enabled":false},"extraFlags":["--bind_ip_all"],"persistence":{"enabled":true,"size":"1Gi"},"replicaCount":3,"replicaSetConfigurationSettings":{"enabled":true},"replicaSetName":"tock"}` | MongoDB settings. See Bitnami MongoDB chart for more details |
+| mongodb.arbiter.enabled | bool | `false` | Enable MongoDB arbiter |
+| mongodb.architecture | string | `"replicaset"` | MongoDB architecture |
+| mongodb.auth.enabled | bool | `false` | Enable MongoDB authentication |
+| mongodb.extraFlags | list | `["--bind_ip_all"]` | MongoDB extraFlags |
+| mongodb.persistence.enabled | bool | `true` | Enable MongoDB persistence using PVC |
+| mongodb.persistence.size | string | `"1Gi"` | MongoDB volume size |
+| mongodb.replicaCount | int | `3` | MongoDB replicaSet configuration settings |
+| mongodb.replicaSetConfigurationSettings | object | `{"enabled":true}` | MongoDB replicaSet configuration settings |
+| mongodb.replicaSetConfigurationSettings.enabled | bool | `true` | MongoDB replicaSet configuration settings |
+| mongodb.replicaSetName | string | `"tock"` | MongoDB replicaSet name |
+
+### nlpApi
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| nlpApi.affinity | object | `{}` | affinity |
+| nlpApi.containerSecurityContext.enabled | bool | `true` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
+| nlpApi.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
+| nlpApi.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
+| nlpApi.containerSecurityContext.runAsUser | int | `99` | Run as user id |
+| nlpApi.environment.tock_default_log_level | string | `"info"` | tock environment (prod, dev, integ) |
+| nlpApi.environment.tock_env | string | `"prod"` | tock environment (prod, dev, integ) |
+| nlpApi.environment.tock_web_use_default_cors_handler | string | `"true"` | cors handler |
+| nlpApi.environment.tock_web_use_default_cors_handler_allowed_methods | string | `""` | cors handler allowed methods, could be "GET, POST, PUT, DELETE, OPTIONS, HEAD" |
+| nlpApi.environment.tock_web_use_default_cors_handler_url | string | `"*"` | cors handler URL |
+| nlpApi.environment.tock_web_use_default_cors_handler_with_credentials | string | `"false"` | cors handler with credentials |
+| nlpApi.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
+| nlpApi.image.registry | string | `"docker.io"` | Docker image registry |
+| nlpApi.image.repository | string | `"tock/nlp_api"` | Docker image name |
+| nlpApi.image.tag | string | `"23.9.2"` | Docker image tag |
+| nlpApi.nodeSelector | object | `{}` | node selector |
+| nlpApi.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
+| nlpApi.podSecurityContext.fsGroup | int | `99` | fsGroup |
+| nlpApi.podSecurityContext.sysctls | list | `[]` | sysctls |
+| nlpApi.replicas | int | `1` | should be > 1 in production |
+| nlpApi.resources | object | `{"limits":{},"requests":{}}` | nlpApi resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
+| nlpApi.tolerations | list | `[]` | tolerations |
 
 ## Authentification configurations
 

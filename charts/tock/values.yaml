@@ -441,7 +441,7 @@ buildWorker:
       # @section -- buildWorker
       sysctls: []
 
-  # -- botApi resource requests and limits
+  # -- buildWorker resource requests and limits
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
   # @section -- buildWorker
   resources: #resources limits and request
@@ -463,109 +463,161 @@ buildWorker:
 # ==============================================
 #  Duckling Settings
 # ==============================================
-
 duckling:
   environment:
+    # -- tock environment (prod, dev, integ)
+    # @section -- Duckling
     tock_env: prod
-  # tock_default_log_level: info
+    # -- log level
+    # @section -- Duckling
+    tock_default_log_level: info
 
-  replicas: 1 # shoud be > 1 in production
+  # -- should be > 1 in production
+  # @section -- Duckling
+  replicas:
   image:
+    # -- Docker image registry
+    # @section -- Duckling
     registry: docker.io
-    repository: tock/duckling # docker image name
-    tag: 23.9.2 # docker image tag
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
+    # -- Docker image name
+    # @section -- Duckling
+    repository: tock/duckling
+    # -- Docker image tag
+    # @section -- Duckling
+    tag: 23.9.2
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- Duckling
     pullSecrets: []
   
-  ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param containerSecurityContext.enabled Enabled ducking containers' Security Context
-  ## @param containerSecurityContext.runAsUser Set Apache Server containers' Security Context runAsUser
   containerSecurityContext:
-    enabled: true
-    runAsNonRoot: true
-    runAsUser: 99
-    runAsGroup: 99
+      # -- Configure Container Security Context
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      # @section -- Duckling
+      enabled: true
+      # -- Run as non root
+      # @section -- Duckling
+      runAsNonRoot: true
+      # -- Run as user id
+      # @section -- Duckling
+      runAsUser: 99
+      # -- Run as Group id
+      # @section -- Duckling
+      runAsGroup: 99
 
   podSecurityContext:
+      # -- Configure Pod Security Context
+      # @section -- Duckling
       enabled: true
+      # -- fsGroup
+      # @section -- Duckling
       fsGroup: 99
+      # -- sysctls
+      # @section -- Duckling
       sysctls: []
 
-  ## buildWorker resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param resources.limits The resources limits for the haproxy containers
-  ## @param resources.requests The requested resources for the haproxy containers
-  ##
+  # -- Duckling resource requests and limits
+  # ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  # @section -- Duckling
   resources: #resources limits and request
     limits: {} # resources limits
     requests: {}  # resources requests
 
-  nodeSelector: {} # node selector
+  # -- node selector
+  # @section -- Duckling
+  nodeSelector: {}
 
-  tolerations: [] # tolerations
+  # -- tolerations
+  # @section -- Duckling
+  tolerations: []
 
-  affinity: {} # affinity
+  # -- affinity
+  # @section -- Duckling
+  affinity: {}
 
 
 # ==============================================
 #  KotlinCompiler Settings
 # ==============================================
-# @section -- kotlinCompiler
 kotlinCompiler:
   environment:
+    # -- tock environment (prod, dev, integ)
+    # @section -- KotlinCompiler
     tock_env: prod
+    # -- log level
+    # @section -- KotlinCompiler
+    tock_default_log_level: info
+    # -- compiler classpath
+    # @section -- KotlinCompiler
     tock_kotlin_compiler_classpath: /maven
-  # tock_default_log_level: info
-  
+
   image:
+    # -- Docker image registry
+    # @section -- KotlinCompiler
     registry: docker.io
-    repository: tock/kotlin_compiler # docker image name
+    # -- Docker image name
+    # @section -- KotlinCompiler
+    repository: tock/kotlin_compiler
+    # -- Docker image tag
+    # @section -- KotlinCompiler
     tag: 23.9.2 # docker image tag
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- KotlinCompiler
     pullSecrets: []
 
-  ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param containerSecurityContext.enabled Enabled kotlinCompiler containers' Security Context
-  ## @param containerSecurityContext.runAsUser Set kotlinCompiler containers' Security Context runAsUser
   containerSecurityContext:
+      # -- Configure Container Security Context
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      # @section -- KotlinCompiler
       enabled: true
+      # -- Run as non root
+      # @section -- KotlinCompiler
       runAsNonRoot: true
+      # -- Run as user id
+      # @section -- KotlinCompiler
       runAsUser: 99
+      # -- Run as Group id
+      # @section -- KotlinCompiler
       runAsGroup: 99
 
   podSecurityContext:
+      # -- Configure Pod Security Context
+      # @section -- KotlinCompiler
       enabled: true
+      # -- fsGroup
+      # @section -- KotlinCompiler
       fsGroup: 99
+      # -- sysctls
+      # @section -- KotlinCompiler
       sysctls: []
 
-  ## kotlinCompiler resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param resources.limits The resources limits for the haproxy containers
-  ## @param resources.requests The requested resources for the haproxy containers
-  ##
-  resources: # resources limits and request
+  # -- KotlinCompiler resource requests and limits
+  # ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  # @section -- KotlinCompiler
+  resources: #resources limits and request
     limits: {} # resources limits
     requests: {}  # resources requests
 
-  nodeSelector: {} # node selector
+  # -- node selector
+  # @section -- KotlinCompiler
+  nodeSelector: {}
 
-  tolerations: [] # tolerations
+  # -- tolerations
+  # @section -- KotlinCompiler
+  tolerations: []
 
-  affinity: {} # affinity
+  # -- affinity
+  # @section -- KotlinCompiler
+  affinity: {}
 
 
 # ==============================================
@@ -574,77 +626,134 @@ kotlinCompiler:
 # @section -- nlpApi
 nlpApi:
   environment:
-    #nlp_duckling_url: http://duckling:8080
+    # -- tock environment (prod, dev, integ)
+    # @section -- nlpApi
     tock_env: prod
+    # -- cors handler
+    # @section -- nlpApi
     tock_web_use_default_cors_handler: "true"
+    # -- cors handler URL
+    # @section -- nlpApi
     tock_web_use_default_cors_handler_url: '*'
+    # -- cors handler with credentials
+    # @section -- nlpApi
     tock_web_use_default_cors_handler_with_credentials: "false"
-  # tock_web_use_default_cors_handler_allowed_methods : "GET, POST, PUT, DELETE, OPTIONS, HEAD"
-  # tock_default_log_level: info 
+    # -- cors handler allowed methods, could be "GET, POST, PUT, DELETE, OPTIONS, HEAD"
+    # @section -- nlpApi
+    tock_web_use_default_cors_handler_allowed_methods : ""
+    # -- tock environment (prod, dev, integ)
+    # @section -- nlpApi
+    tock_default_log_level: info 
+  # followin element are computed by the chart if not set  
+  # nlp_duckling_url: http://duckling:8080
+
+  # -- should be > 1 in production
+  # @section -- nlpApi
   replicas: 1 # should be > 1 in production
   image:
+    # -- Docker image registry
+    # @section -- nlpApi
     registry: docker.io
+    # -- Docker image name
+    # @section -- nlpApi
     repository: tock/nlp_api
+    # -- Docker image tag
+    # @section -- nlpApi
     tag: 23.9.2
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- nlpApi
     pullSecrets: []
 
-  ## Configure Container Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  ## @param containerSecurityContext.enabled Enabled nlpApi containers' Security Context
-  ## @param containerSecurityContext.runAsUser Set nlpApi containers' Security Context runAsUser
   containerSecurityContext:
+      # -- Configure Container Security Context
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      # @section -- nlpApi
       enabled: true
+      # -- Run as non root
+      # @section -- nlpApi
       runAsNonRoot: true
+      # -- Run as user id
+      # @section -- nlpApi
       runAsUser: 99
+      # -- Run as Group id
+      # @section -- nlpApi
       runAsGroup: 99
 
   podSecurityContext:
+      # -- Configure Pod Security Context
+      # @section -- nlpApi
       enabled: true
+      # -- fsGroup
+      # @section -- nlpApi
       fsGroup: 99
+      # -- sysctls
+      # @section -- nlpApi
       sysctls: []
 
-  ## nlpApi resource requests and limits
-  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  ## @param resources.limits The resources limits for the haproxy containers
-  ## @param resources.requests The requested resources for the haproxy containers
-  ##
-  resources: # resources limits and request
+  # -- nlpApi resource requests and limits
+  # ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  # @section -- nlpApi
+  resources: #resources limits and request
     limits: {} # resources limits
     requests: {}  # resources requests
 
-  nodeSelector: {} # node selector
+  # -- node selector
+  # @section -- nlpApi
+  nodeSelector: {}
 
-  tolerations: [] # tolerations
+  # -- tolerations
+  # @section -- nlpApi
+  tolerations: []
 
-  affinity: {} # affinity
-
+  # -- affinity
+  # @section -- nlpApi
+  affinity: {}
 
 # ==============================================
 # MongoDB Settings
 # Bitnami 13.6.8
 # ==============================================
+# -- MongoDB settings. See Bitnami MongoDB chart for more details
 # @section -- mongodb
 mongodb:
+  # -- MongoDB architecture
+  # @section -- mongodb
   architecture: "replicaset"
+  # -- MongoDB replicaSet name
+  # @section -- mongodb
   replicaSetName: "tock"
+  # -- MongoDB replicaSet configuration settings
+  # @section -- mongodb
   replicaCount: 3
+  # -- MongoDB replicaSet configuration settings
+  # @section -- mongodb
   replicaSetConfigurationSettings:
+    # -- MongoDB replicaSet configuration settings
+    # @section -- mongodb
     enabled: true
+  # -- MongoDB extraFlags
+  # @section -- mongodb
   extraFlags:
-    - "--bind_ip_all"
+    - "--bind_ip_all" 
   arbiter:
+    # -- Enable MongoDB arbiter
+    # @section -- mongodb
     enabled: false
   auth:
+    # -- Enable MongoDB authentication
+    # @section -- mongodb
     enabled: false
   persistence:
+    # -- Enable MongoDB persistence using PVC
+    # @section -- mongodb
     enabled: true
+    # -- MongoDB volume size
+    # @section -- mongodb
     size: 1Gi
 #    storageClass: local-path
 #  image:
