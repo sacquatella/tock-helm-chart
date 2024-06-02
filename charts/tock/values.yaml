@@ -17,6 +17,10 @@ global:
     # -- If true Deploy MongoDB subchart
     # @section -- Global
     enabled: true
+  deployOpenSearch:
+    # -- If true Deploy OpenSearch subchart
+    # @section -- Global
+    enabled: false
   # -- If mongoDB is not deployed by the chart, you can use this to connect to an external mongoDB
   # @section -- Global
   #mongodbUrls: mongodb://myuser:mypass@fqdn-node1:27017,fqdn-node2:27017,fqdn-node3:27017/mydb?replicaSet=rs0
@@ -715,6 +719,90 @@ nlpApi:
   affinity: {}
 
 # ==============================================
+#  gen_ai_orchestrator-server
+# ==============================================
+gen-ai-orchestrator-server:
+  environment:
+    # -- gen-ai environment (prod, dev, integ)
+    # @section -- gen-ai-orchestrator-server
+    tock_gen_ai_orchestrator_application_environment: dev
+    tock_gen_ai_orchestrator_open_search_host: opensearch-node1
+    tock_gen_ai_orchestrator_open_search_port: 9200
+    tock_gen_ai_orchestrator_open_search_pwd: admin
+    tock_gen_ai_orchestrator_open_search_user: admin
+    tock_gen_ai_orchestrator_open_search_timeout: 5
+    tock_gen_ai_orchestrator_llm_provider_timeout: 120
+    tock_gen_ai_orchestrator_llm_provider_max_retries: 0
+    tock_gen_ai_orchestrator_em_provider_timeout: 120
+ # -- should be > 1 in production
+  # @section -- gen-ai-orchestrator-server
+  replicas: 1 # should be > 1 in production
+  image:
+    # -- Docker image registry
+    # @section -- gen-ai-orchestrator-server
+    registry: docker.io
+    # -- Docker image name
+    # @section -- gen-ai-orchestrator-server
+    repository: tock/gen-ai-orchestrator-server
+    # -- Docker image tag
+    # @section -- gen-ai-orchestrator-server
+    tag: 24.3.1
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
+    # @section -- gen-ai-orchestrator-server
+    pullSecrets: []
+
+  containerSecurityContext:
+      # -- Configure Container Security Context
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+      # @section -- gen-ai-orchestrator-server
+      enabled: true
+      # -- Run as non root
+      # @section -- gen-ai-orchestrator-server
+      runAsNonRoot: true
+      # -- Run as user id
+      # @section -- gen-ai-orchestrator-server
+      runAsUser: 99
+      # -- Run as Group id
+      # @section -- gen-ai-orchestrator-server
+      runAsGroup: 99
+
+  podSecurityContext:
+      # -- Configure Pod Security Context
+      # @section -- gen-ai-orchestrator-server
+      enabled: true
+      # -- fsGroup
+      # @section -- gen-ai-orchestrator-server
+      fsGroup: 99
+      # -- sysctls
+      # @section -- gen-ai-orchestrator-server
+      sysctls: []
+
+  # -- gen-ai-orchestrator-server resource requests and limits
+  # ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  # @section -- gen-ai-orchestrator-server
+  resources: #resources limits and request
+    limits: {} # resources limits
+    requests: {}  # resources requests
+
+  # -- node selector
+  # @section -- gen-ai-orchestrator-server
+  nodeSelector: {}
+
+  # -- tolerations
+  # @section -- gen-ai-orchestrator-server
+  tolerations: []
+
+  # -- affinity
+  # @section -- gen-ai-orchestrator-server
+  affinity: {}
+
+
+# ==============================================
 # MongoDB Settings
 # Bitnami 13.6.8
 # ==============================================
@@ -771,3 +859,19 @@ mongodb:
 #  image:
 #    repository: arm64v8/mongo
 #    tag: 6.0.2
+
+
+
+# ==============================================
+# OpenSearch Settings
+# ==============================================
+opensearch:
+  # -- OpenSearch architectureCluster name
+  # @section -- openSearch
+  clusterName: "opensearch-cluster"
+  singleNode: true
+  replicas: 3
+  opensearchJavaOpts: "-Xms512m -Xmx512m"
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      value: DoThisOne12+
