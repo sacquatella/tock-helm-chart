@@ -27,6 +27,13 @@ data:
     tock_web_use_default_cors_handler_allowed_methods: '{{ default "" .Values.botApi.environment.tock_web_use_default_cors_handler_allowed_methods }}'
     tock_web_enable_markdown: '{{ default "false" .Values.botApi.environment.tock_web_enable_markdown }}'
     tock_default_log_level: '{{ default "info" .Values.botApi.environment.tock_default_log_level }}'
+    tock_gen_ai_orchestrator_secret_storage_type: '{{ default "Raw" .Values.botApi.environment.tock_gen_ai_orchestrator_secret_storage_type }}'
+    tock_gen_ai_orchestrator_server_url: 'http://{{ .Release.Name }}-genai-orchestrator:8000'
+    tock_gen_ai_orchestrator_client_request_timeout_ms: '{{ default "55000" .Values.botApi.environment.tock_gen_ai_orchestrator_client_request_timeout_ms }}'
+    tock_gen_ai_orchestrator_technical_error: '{{ default "1" .Values.botApi.environment.tock_gen_ai_orchestrator_technical_error }}'
+    tock_gen_ai_orchestrator_document_number_neighbors: '{{ default "Technical error :( sorry!" .Values.botApi.environment.tock_gen_ai_orchestrator_document_number_neighbors }}'
+    tock_gen_ai_orchestrator_dialog_number_messages: '{{ default "5" .Values.botApi.environment.tock_gen_ai_orchestrator_dialog_number_messages }}'
+    tock_gen_ai_orchestrator_rag_debug_enabled: '{{ default "false" .Values.botApi.environment.tock_gen_ai_orchestrator_rag_debug_enabled }}' 
 
 {{ if .Values.global.tockMongodbFront}}
     tock_front_mongo_db: '{{ tpl .Values.global.tockMongodbFront . }}'

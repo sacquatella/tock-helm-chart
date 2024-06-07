@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: '{{ .Release.Name }}-genai-orchestrator-cfg'
+  labels:
+    app.kubernetes.io/name: genai-orchestrator
+    app.kubernetes.io/component: genai-orchestrator
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+    tock_gen_ai_orchestrator_open_search_host: '{{ template "urls.opensearch" . }}'
+    tock_gen_ai_orchestrator_open_search_port: '{{ template "port.opensearch" . }}'
+    tock_gen_ai_orchestrator_open_search_pwd: '{{ template "pwd.opensearch" . }}'
+    tock_gen_ai_orchestrator_open_search_user: '{{ template "user.opensearch" . }}'
+    tock_gen_ai_orchestrator_application_environment: '{{ default "dev" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_application_environment . }}'
+    tock_gen_ai_orchestrator_open_search_timeout: '{{ default "5" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_timeout . }}'
+    tock_gen_ai_orchestrator_llm_provider_timeout: '{{ default "120" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_timeout . }}'
+    tock_gen_ai_orchestrator_llm_provider_max_retries: '{{ default "0" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_max_retries . }}'
+    tock_gen_ai_orchestrator_em_provider_timeout: '{{ default "120" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_em_provider_timeout . }}'

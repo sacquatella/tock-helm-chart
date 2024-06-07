@@ -721,11 +721,11 @@ nlpApi:
 # ==============================================
 #  gen_ai_orchestrator-server
 # ==============================================
-gen-ai-orchestrator-server:
+genAiOrchestrator:
   environment:
     # -- gen-ai environment (prod, dev, integ)
     # @section -- gen-ai-orchestrator-server
-    tock_gen_ai_orchestrator_application_environment: dev
+    tock_gen_ai_orchestrator_application_environment: DEV # DEV or PROD in uppercase only
     tock_gen_ai_orchestrator_open_search_host: opensearch-node1
     tock_gen_ai_orchestrator_open_search_port: 9200
     tock_gen_ai_orchestrator_open_search_pwd: admin

@@ -1,4 +1,20 @@
 
+
+{{- define "common.names.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default .Chart.Name .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+
 {{/*
 Create the default FQDN for Mongo primary headless service
 It use for checking if mongo service is ready or not when a container start.
@@ -38,6 +54,7 @@ Get mongodb Port
 {{- end -}}
 
 
+
 {{/*
 Create the full URI for Mongo service
 podname.servicename.namespacename.svc.clusterdomain:port
@@ -51,6 +68,7 @@ podname.servicename.namespacename.svc.clusterdomain:port
 {{- end -}}
 
 {{/*
+Create the full URI for Mongo service
 */}}
 {{- define "urls.mongo" -}}
 {{- if .Values.global.deployMongoDb.enabled -}}
@@ -64,6 +82,53 @@ podname.servicename.namespacename.svc.clusterdomain:port
 {{- end -}}
 
 {{/*
+Create the full URI for Opensearch service
+*/}}
+{{- define "urls.opensearch" -}}
+{{- if .Values.global.deployOpenSearch.enabled -}}
+{{- $opensearch1 := printf "%s-%s.%s-%s.%s.svc.%s:%s" .Release.Name "opensearch-cluster-master-0" .Release.Name "opensearch-cluster-master-headless" .Release.Namespace .Values.global.clusterDomain "9200" -}}
+{{- printf "%s" $opensearch1 -}}
+{{- else -}}
+{{- printf "%s" .Values.global.opensearchUrls -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get Opensearch Port
+*/}}
+{{- define "port.opensearch" -}}
+{{- if .Values.global.deployOpenSearch.enabled -}}
+{{- printf "%s-%s.%s-%s" .Release.Name "mongodb-0" .Release.Name "mongodb-headless" -}}
+{{- else -}}
+{{- default "9200" .Values.global.openSearchPort -}}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Get Opensearch user
+*/}}
+{{- define "user.opensearch" -}}
+{{- if .Values.global.deployOpenSearch.enabled -}}
+{{- printf "%s" .Release.Name "mongodb-0" .Release.Name "mongodb-headless" -}}
+{{- else -}}
+{{- default "admin" .Values.global.openSearchUser -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get Opensearch password
+*/}}
+{{- define "pwd.opensearch" -}}
+{{- if .Values.global.deployOpenSearch.enabled -}}
+{{- printf "%s" .Release.Name "mongodb-0" .Release.Name "mongodb-headless" -}}
+{{- else -}}
+{{- default "admin" .Values.global.openSearchPassword -}}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Build user defined mongodb urls
 */}}
 {{- define "mongo.BuildString" -}}
@@ -75,6 +140,21 @@ Build user defined mongodb urls
 {{- end -}}
 {{- printf "%s" $mongourls -}}
 {{- end -}}
+
+
+{{/*
+Build opensearch urls
+*/}}
+{{- define "opensearch.BuildString" -}}
+{{- $opensearchurls := list -}}
+{{- $global := . -}}
+{{- range .Values.global.opensearchUrls -}}
+{{- $opensearch := printf "%s:%s" . $global.Values.global.opensearchPort -}}
+{{- $opensearchurls := append $opensearchurls $opensearch -}}
+{{- end -}}
+{{- printf "%s" $opensearchurls -}}
+{{- end -}}
+*/}}
 
 
 {{/*
@@ -197,6 +277,15 @@ Return the proper kotlinCompiler internal url
 {{- printf "%s-%s.%s.svc.%s" .Release.Name "kotlin-compiler" .Release.Namespace .Values.global.clusterDomain -}}
 {{- end -}}
 
+
+{{/*
+Return the proper genai-orchestrator internal url
+*/}}
+{{- define "genai.url" -}}
+{{- printf "%s-%s.%s.svc.%s" .Release.Name "genai-orchestrator" .Release.Namespace .Values.global.clusterDomain -}}
+{{- end -}}
+
+
 {{/*
 Return the proper nlpApi image name
 */}}
@@ -210,6 +299,15 @@ Return the proper nlpApi internal url
 {{- define "nlpApi.url" -}}
 {{- printf "%s-%s.%s.svc.%s" .Release.Name "nlp-api" .Release.Namespace .Values.global.clusterDomain -}}
 {{- end -}}
+
+
+{{/*
+Return the proper genAiOrchestrator image name
+*/}}
+{{- define "genAiOrchestrator.image" -}}
+{{- include "common.images.image" (dict "imageRoot" .Values.genAiOrchestrator.image "global" .Values.global) -}}
+{{- end -}}
+
 
 {{/*
 Return the proper busybox image name for init containers
@@ -257,5 +355,12 @@ Return the proper kotlinCompiler Docker Image Registry Secret Names
 Return the proper nlpApi Docker Image Registry Secret Names
 */}}
 {{- define "nlpApi.imagePullSecrets" -}}
+{{- include "common.images.pullSecrets" (dict "images" (list .Values.nlpApi.image) "global" .Values.global) -}}
+{{- end -}}
+
+{{/*
+Return the proper genAiOrchestrator Docker Image Registry Secret Names
+*/}}
+{{- define "genAiOrchestrator.imagePullSecrets" -}}
 {{- include "common.images.pullSecrets" (dict "images" (list .Values.nlpApi.image) "global" .Values.global) -}}
 {{- end -}}
