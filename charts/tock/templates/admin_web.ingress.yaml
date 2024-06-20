@@ -17,6 +17,10 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+{{- with .Values.adminWeb.ingress.tls }}
+  tls:
+{{ toYaml . | indent 4 }}
+{{- end }}
   rules:
     - host: tockstudio-{{ .Release.Name }}.{{ .Values.global.wildcardDomain }}
       http:
