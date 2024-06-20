@@ -51,3 +51,7 @@ data:
 {{ if .Values.adminWeb.environment.botadminverticle_base_href}}
     botadminverticle_base_href: '{{ tpl .Values.adminWeb.environment.botadminverticle_base_href . }}'
 {{- end }}
+    tock_gen_ai_orchestrator_server_url: 'http://{{ .Release.Name }}-genai-orchestrator:8000'
+    tock_gen_ai_orchestrator_client_request_timeout_ms: '{{ default "55000" .Values.adminWeb.environment.tock_gen_ai_orchestrator_client_request_timeout_ms }}'
+    tock_gen_ai_orchestrator_secret_storage_type: '{{ default "Raw" .Values.adminWeb.environment.tock_gen_ai_orchestrator_secret_storage_type }}'
+    tock_gen_ai_orchestrator_technical_error: '{{ default "Technical error :( sorry!" .Values.adminWeb.environment.tock_gen_ai_orchestrator_technical_error }}'
