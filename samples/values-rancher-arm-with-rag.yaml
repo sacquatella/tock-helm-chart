@@ -15,6 +15,7 @@ adminWeb:
 
 mongodb:
   architecture: "replicaset"
+  replicaCount: 1
   auth:
     enabled: false
   persistence:

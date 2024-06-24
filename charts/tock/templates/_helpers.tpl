@@ -362,5 +362,5 @@ Return the proper nlpApi Docker Image Registry Secret Names
 Return the proper genAiOrchestrator Docker Image Registry Secret Names
 */}}
 {{- define "genAiOrchestrator.imagePullSecrets" -}}
-{{- include "common.images.pullSecrets" (dict "images" (list .Values.nlpApi.image) "global" .Values.global) -}}
+{{- include "common.images.pullSecrets" (dict "images" (list .Values.genAiOrchestrator.image) "global" .Values.global) -}}
 {{- end -}}

@@ -22,6 +22,6 @@ You will find more information on chart parameters at the helm chart [README](ch
 
 ## What is deployed 
 
-The chart deploy all tock components. It's able also to deploy a mongodb database (Bitnami mongoDb chart is used as subchart) or use an existing mongodb backend.
+The chart deploy all tock components. It's able also to deploy a mongodb database (Bitnami mongoDb chart is used as subchart) or use an existing mongodb backend. In the same feeling, with version 24.3.2 of tock, opensearch can be deployed as sub chart (opensearch chart is used as subchart).
 
 ![Tock on K8S](plantuml-img.png)

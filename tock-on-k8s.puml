@@ -1,0 +1,139 @@
+@startuml
+
+package "Kubernetes" {
+
+node "adminWeb" {
+
+Component "bot_admin" <<pod>> as BAPOD
+Component "admin-web-svc" <<service>> as BASVC
+Component "admin-web-ing" <<ingress>> as BAING
+Component "admin-web-cfg" <<configmap>> as BACFM
+
+BASVC --> BAPOD
+BAPOD --> BACFM
+BAING --> BASVC
+
+}
+
+node "bot_api" {
+
+Component "bot_api" <<pod>> as BAPIPOD
+Component "bot-api-svc" <<service>> as BAPISVC
+Component "bot-api-ing" <<ingress>> as BAPIING
+Component "bot-api-cfg" <<configmap>> as BAPICFM
+
+BAPISVC --> BAPIPOD
+BAPIPOD --> BAPICFM
+BAPIING --> BAPISVC
+
+}
+
+node "build_worker" {
+
+Component "build-worker" <<pod>> as BWPOD
+Component "build-worker-svc" <<service>> as BWSVC
+Component "build-worker-cfg" <<configmap>> as BWCFM
+
+BWPOD --> BWCFM
+BWSVC --> BWPOD
+
+}
+
+node "duckling" {
+
+Component "duckling" <<pod>> as DPOD
+Component "duckling-svc" <<service>> as DSVC
+Component "duckling-cfg" <<configmap>> as DCFM
+
+DPOD --> DCFM
+DSVC-->DPOD
+
+}
+
+node "kotlin_compiler" {
+
+Component "kotlin-compiler" <<pod>> as KCPOD
+Component "kotlin-compiler-svc" <<service>> as KCSVC
+Component "kotlin-compiler-cfg" <<configmap>> as KCCFM
+
+KCPOD --> KCCFM
+KCSVC --> KCPOD
+
+}
+
+node "nlp_api" {
+
+Component "nlp-api" <<pod>> as NLPPOD
+Component "nlp-api-svc" <<service>> as NLPSVC
+Component "nlp-api-cfg" <<configmap>> as NLPCFM
+
+NLPPOD --> NLPCFM
+NLPSVC --> NLPPOD
+
+}
+
+
+node "genAiOrchestrator" {
+Component "genai-orchestrator" <<pod>> as GAIPOD
+Component "genai-orchestrator" <<service>> as GAISVC
+Component "genai-orchestrator-cfg" <<configmap>> as GAICFM
+
+GAIPOD --> GAICFM
+GAISVC --> GAIPOD
+
+
+}
+
+database "opensearch" {
+
+Component "opensearch-cluster-master-0" <<pod>> as OPENS1POD
+Component "opensearch-cluster-master-0" <<pod>> as OPENS2POD
+Component "opensearch-cluster-master-0" <<pod>> as OPENS3POD
+Component "opensearch-cluster-master-headless"  <<headless-service>> as OPENSSVC
+
+OPENSSVC ..> OPENS1POD
+OPENSSVC ..> OPENS2POD
+OPENSSVC ..> OPENS3POD
+
+
+}
+
+database "mongodb" {
+
+Component "mongodb-1" <<pod>> as NONG1POD
+Component "mongodb-2" <<pod>> as NONG2POD
+Component "mongodb-3" <<pod>> as NONG3POD
+Component "mongodb-svc"  <<headless-service>> as NONGSVC
+
+NONGSVC ..> NONG1POD
+NONGSVC ..> NONG2POD
+NONGSVC ..> NONG3POD
+}
+
+BAPOD -> NONGSVC
+BAPOD -> BAPISVC
+BAPOD -> DSVC
+BAPOD -> NLPSVC
+BAPOD -> KCSVC
+
+BAPIPOD -> NONGSVC
+BAPIPOD -> NLPSVC
+
+BWPOD -> NONGSVC
+
+DPOD -> NONGSVC
+
+NLPPOD -> NONGSVC
+NLPPOD -> DSVC
+
+GAIPOD --> OPENSSVC
+BAPOD -> GAISVC
+BAPIPOD -> GAISVC
+
+}
+
+HTTP - BAING
+HTTP - BAPIING
+
+
+@enduml

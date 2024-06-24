@@ -11,8 +11,6 @@ botApi:
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
     tls:
       - secretName: ingress-tls-secret
-  service:
-    type: NodePort
 
 adminWeb:
   ingress:
@@ -22,5 +20,3 @@ adminWeb:
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
     tls:
       - secretName: ingress-tls-secret
-  service:
-    type: NodePort
