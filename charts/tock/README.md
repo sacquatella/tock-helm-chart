@@ -150,7 +150,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | duckling.resources | object | `{"limits":{},"requests":{}}` | Duckling resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
 | duckling.tolerations | list | `[]` | tolerations |
 
-### gen-ai-orchestrator-server
+### genAiOrchestrator
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -159,7 +159,15 @@ This creates values, but sectioned into own section tables if a section comment 
 | genAiOrchestrator.containerSecurityContext.runAsGroup | int | `99` | Run as Group id |
 | genAiOrchestrator.containerSecurityContext.runAsNonRoot | bool | `true` | Run as non root |
 | genAiOrchestrator.containerSecurityContext.runAsUser | int | `99` | Run as user id |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_application_environment | string | `"DEV"` | gen-ai environment (prod, dev, integ) |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_application_environment | string | `"DEV"` | DEV or PROD in uppercase only |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_em_provider_timeout | int | `120` | llm embedding retries |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_max_retries | int | `0` | llm retries |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_timeout | int | `120` | llm timeout |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_host | string | `"opensearch-node1"` | Opensearch host |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_port | int | `9200` | Opensearch port |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_pwd | string | `"admin"` | Opensearch password |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_timeout | int | `5` | Opensearch timeout |
+| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_user | string | `"admin"` | Opensearch login |
 | genAiOrchestrator.image.pullSecrets | list | `[]` | Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ e.g: pullSecrets:   - myRegistryKeySecretName |
 | genAiOrchestrator.image.registry | string | `"docker.io"` | Docker image registry |
 | genAiOrchestrator.image.repository | string | `"tock/gen-ai-orchestrator-server"` | Docker image name |
@@ -168,6 +176,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | genAiOrchestrator.podSecurityContext.enabled | bool | `true` | Configure Pod Security Context |
 | genAiOrchestrator.podSecurityContext.fsGroup | int | `99` | fsGroup |
 | genAiOrchestrator.podSecurityContext.sysctls | list | `[]` | sysctls |
+| genAiOrchestrator.replicas | int | `1` | should be > 1 in production |
 | genAiOrchestrator.resources | object | `{"limits":{},"requests":{}}` | gen-ai-orchestrator-server resource requests and limits ref: https://kubernetes.io/docs/user-guide/compute-resources/ |
 | genAiOrchestrator.tolerations | list | `[]` | tolerations |
 
@@ -259,25 +268,16 @@ This creates values, but sectioned into own section tables if a section comment 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | opensearch.clusterName | string | `"opensearch-cluster"` | OpenSearch architectureCluster name |
+| opensearch.extraEnvs[0].value | string | `"DoThisOne12+"` | default initial admin password |
+| opensearch.opensearchJavaOpts | string | `"-Xms512m -Xmx512m"` | OpenSearch java options |
+| opensearch.replicas | int | `3` | Cluster node number |
+| opensearch.singleNode | bool | `false` | Deploy as single node |
 
 ### Other Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_em_provider_timeout | int | `120` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_max_retries | int | `0` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_timeout | int | `120` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_host | string | `"opensearch-node1"` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_port | int | `9200` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_pwd | string | `"admin"` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_timeout | int | `5` |  |
-| genAiOrchestrator.environment.tock_gen_ai_orchestrator_open_search_user | string | `"admin"` |  |
-| genAiOrchestrator.replicas | int | `1` |  |
 | opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
-| opensearch.extraEnvs[0].value | string | `"DoThisOne12+"` |  |
-| opensearch.opensearchJavaOpts | string | `"-Xms512m -Xmx512m"` |  |
-| opensearch.replicas | int | `3` |  |
-| opensearch.singleNode | bool | `true` |  |
 
 ## Authentification configurations
 

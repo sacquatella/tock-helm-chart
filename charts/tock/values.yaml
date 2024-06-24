@@ -724,30 +724,48 @@ nlpApi:
 genAiOrchestrator:
   environment:
     # -- gen-ai environment (prod, dev, integ)
-    # @section -- gen-ai-orchestrator-server
+    # @section -- genAiOrchestrator
+    # -- DEV or PROD in uppercase only
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_application_environment: DEV # DEV or PROD in uppercase only
+    # -- Opensearch host
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_open_search_host: opensearch-node1
+    # -- Opensearch port
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_open_search_port: 9200
+    # -- Opensearch password
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_open_search_pwd: admin
+    # -- Opensearch login
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_open_search_user: admin
+    # -- Opensearch timeout
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_open_search_timeout: 5
+    # -- llm timeout
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_llm_provider_timeout: 120
+    # -- llm retries
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_llm_provider_max_retries: 0
+    # -- llm embedding retries
+    # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_em_provider_timeout: 120
     # OPENAI_API_BASE: https://api.openai.com/v1
 
- # -- should be > 1 in production
-  # @section -- gen-ai-orchestrator-server
-  replicas: 1 # should be > 1 in production
+  # -- should be > 1 in production
+  # @section -- genAiOrchestrator
+  replicas: 1
   image:
     # -- Docker image registry
-    # @section -- gen-ai-orchestrator-server
+    # @section -- genAiOrchestrator
     registry: docker.io
     # -- Docker image name
-    # @section -- gen-ai-orchestrator-server
+    # @section -- genAiOrchestrator
     repository: tock/gen-ai-orchestrator-server
     # -- Docker image tag
-    # @section -- gen-ai-orchestrator-server
+    # @section -- genAiOrchestrator
     tag: 24.3.2
     # -- Optionally specify an array of imagePullSecrets.
     # Secrets must be manually created in the namespace.
@@ -755,52 +773,52 @@ genAiOrchestrator:
     # e.g:
     # pullSecrets:
     #   - myRegistryKeySecretName
-    # @section -- gen-ai-orchestrator-server
+    # @section -- genAiOrchestrator
     pullSecrets: []
 
   containerSecurityContext:
       # -- Configure Container Security Context
       # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       enabled: true
       # -- Run as non root
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       runAsNonRoot: true
       # -- Run as user id
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       runAsUser: 99
       # -- Run as Group id
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       runAsGroup: 99
 
   podSecurityContext:
       # -- Configure Pod Security Context
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       enabled: true
       # -- fsGroup
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       fsGroup: 99
       # -- sysctls
-      # @section -- gen-ai-orchestrator-server
+      # @section -- genAiOrchestrator
       sysctls: []
 
   # -- gen-ai-orchestrator-server resource requests and limits
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
-  # @section -- gen-ai-orchestrator-server
+  # @section -- genAiOrchestrator
   resources: #resources limits and request
     limits: {} # resources limits
     requests: {}  # resources requests
 
   # -- node selector
-  # @section -- gen-ai-orchestrator-server
+  # @section -- genAiOrchestrator
   nodeSelector: {}
 
   # -- tolerations
-  # @section -- gen-ai-orchestrator-server
+  # @section -- genAiOrchestrator
   tolerations: []
 
   # -- affinity
-  # @section -- gen-ai-orchestrator-server
+  # @section -- genAiOrchestrator
   affinity: {}
 
 
@@ -871,9 +889,17 @@ opensearch:
   # -- OpenSearch architectureCluster name
   # @section -- openSearch
   clusterName: "opensearch-cluster"
-  singleNode: true
+  # -- Deploy as single node
+  # @section -- openSearch
+  singleNode: false
+  # -- Cluster node number
+  # @section -- openSearch
   replicas: 3
+  # -- OpenSearch java options
+  # @section -- openSearch
   opensearchJavaOpts: "-Xms512m -Xmx512m"
   extraEnvs:
     - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+    # -- default initial admin password
+    # @section -- openSearch
       value: DoThisOne12+
