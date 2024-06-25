@@ -86,10 +86,11 @@ Create the full URI for Opensearch service
 */}}
 {{- define "urls.opensearch" -}}
 {{- if .Values.global.deployOpenSearch.enabled -}}
-{{- $opensearch1 := printf "%s-%s.%s-%s.%s.svc.%s:%s" .Release.Name "opensearch-cluster-master-0" .Release.Name "opensearch-cluster-master-headless" .Release.Namespace .Values.global.clusterDomain "9200" -}}
+{{/* - $opensearch1 := printf "%s-%s.%s-%s.%s.svc.%s" .Release.Name "opensearch-cluster-master-0" .Release.Name "opensearch-cluster-master-headless" .Release.Namespace .Values.global.clusterDomain - */}}
+{{- $opensearch1 := printf "%s.%s.%s.svc.%s" "opensearch-cluster-master-0" "opensearch-cluster-master-headless" .Release.Namespace .Values.global.clusterDomain -}}
 {{- printf "%s" $opensearch1 -}}
 {{- else -}}
-{{- printf "%s" .Values.global.opensearchUrls -}}
+{{- printf "%s" .Values.global.deployOpenSearch.openSearchHost -}}
 {{- end -}}
 {{- end -}}
 
@@ -98,9 +99,9 @@ Get Opensearch Port
 */}}
 {{- define "port.opensearch" -}}
 {{- if .Values.global.deployOpenSearch.enabled -}}
-{{- printf "%s-%s.%s-%s" .Release.Name "mongodb-0" .Release.Name "mongodb-headless" -}}
+{{- default "9200" .Values.opensearch.httpPort -}}
 {{- else -}}
-{{- default "9200" .Values.global.openSearchPort -}}
+{{- printf "%s" .Values.global.deployOpenSearch.openSearchPort -}}
 {{- end -}}
 {{- end -}}
 
@@ -109,11 +110,7 @@ Get Opensearch Port
 Get Opensearch user
 */}}
 {{- define "user.opensearch" -}}
-{{- if .Values.global.deployOpenSearch.enabled -}}
-{{- printf "%s" .Release.Name "mongodb-0" .Release.Name "mongodb-headless" -}}
-{{- else -}}
-{{- default "admin" .Values.global.openSearchUser -}}
-{{- end -}}
+{{- printf "%s" "admin" -}}
 {{- end -}}
 
 {{/*
@@ -121,9 +118,13 @@ Get Opensearch password
 */}}
 {{- define "pwd.opensearch" -}}
 {{- if .Values.global.deployOpenSearch.enabled -}}
-{{- printf "%s" .Release.Name "mongodb-0" .Release.Name "mongodb-headless" -}}
+{{- range .Values.opensearch.extraEnvs }}
+  {{- if eq .name "OPENSEARCH_INITIAL_ADMIN_PASSWORD" }}
+    {{-  printf "%s" .value -}}
+  {{- end }}
+{{- end }}
 {{- else -}}
-{{- default "admin" .Values.global.openSearchPassword -}}
+{{- default "admin" .Values.global.deployOpenSearch.openSearchPassword -}}
 {{- end -}}
 {{- end -}}
 

@@ -21,6 +21,18 @@ global:
     # -- If true Deploy OpenSearch subchart
     # @section -- Global
     enabled: false
+    # -- for an existing opensearch cluster
+    # @section -- Global
+    openSearchPort : "9200"
+    # -- for an existing opensearch cluster
+    # @section -- Global
+    openSearchHost : opensearch-node1
+    # -- for an existing opensearch cluster
+    # @section -- Global
+    openSearchUser : admin
+    # -- for an existing opensearch cluster
+    # @section -- Global
+    openSearchPwd : admin
   # -- If mongoDB is not deployed by the chart, you can use this to connect to an external mongoDB
   # @section -- Global
   #mongodbUrls: mongodb://myuser:mypass@fqdn-node1:27017,fqdn-node2:27017,fqdn-node3:27017/mydb?replicaSet=rs0
@@ -752,7 +764,7 @@ genAiOrchestrator:
     # -- llm embedding retries
     # @section -- genAiOrchestrator
     tock_gen_ai_orchestrator_em_provider_timeout: 120
-    # OPENAI_API_BASE: https://api.openai.com/v1
+    # OPENAI_API_BASE: "http://host.docker.internal:8080/v1"
 
   # -- should be > 1 in production
   # @section -- genAiOrchestrator
@@ -889,6 +901,7 @@ opensearch:
   # -- OpenSearch architectureCluster name
   # @section -- openSearch
   clusterName: "opensearch-cluster"
+  #nameOverride: "opensearch-rag"
   # -- Deploy as single node
   # @section -- openSearch
   singleNode: false
@@ -900,6 +913,4 @@ opensearch:
   opensearchJavaOpts: "-Xms512m -Xmx512m"
   extraEnvs:
     - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
-    # -- default initial admin password
-    # @section -- openSearch
-      value: DoThisOne12+
+      value: "DoThisOne12+"

@@ -20,5 +20,5 @@ data:
     tock_gen_ai_orchestrator_llm_provider_max_retries: '{{ default "0" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_llm_provider_max_retries . }}'
     tock_gen_ai_orchestrator_em_provider_timeout: '{{ default "120" .Values.genAiOrchestrator.environment.tock_gen_ai_orchestrator_em_provider_timeout . }}'
     {{- if .Values.genAiOrchestrator.environment.OPENAI_API_BASE }}
-    OPENAI_API_BASE: '{{ default "https://api.openai.com" .Values.genAiOrchestrator.environment.OPENAI_API_BASE . }}'
+    OPENAI_API_BASE: '{{ default "https://api.openai.com/v1" .Values.genAiOrchestrator.environment.OPENAI_API_BASE . }}'
     {{- end }}
