@@ -4,6 +4,7 @@ global:
     enabled: true
   deployOpenSearch:
     enabled: true
+    dashboardEnabled: true
 
 botApi:
   ingress:

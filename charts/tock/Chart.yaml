@@ -3,8 +3,7 @@ appVersion: 24.3.2
 description: A helm chart for Tock. Tock is an open conversational AI platform. It's a complete solution to build conversational agents aka bots.Tock can integrate and experiment with both classic and Generative AI (LLM, RAG) models
 name: tock
 type: application
-version: 0.4.1
-
+version: 0.4.2
 
 maintainers:
   - name: stephanacquatella
@@ -19,8 +18,16 @@ dependencies:
     - mongodb
 
 - name: opensearch
-  version: 2.20.0
+  version: 2.21.0
   repository : https://opensearch-project.github.io/helm-charts/
   condition: global.deployOpenSearch.enabled
   tags: 
     - opensearch
+
+- name: opensearch-dashboards
+  version: 2.19.0
+  repository : https://opensearch-project.github.io/helm-charts/
+  condition: global.deployOpenSearch.enabled
+  tags: 
+    - opensearch
+    - dashboard

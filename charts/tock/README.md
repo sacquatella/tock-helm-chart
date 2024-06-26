@@ -2,7 +2,7 @@
 
 A helm chart for Tock. Tock is an open conversational AI platform. It's a complete solution to build conversational agents aka bots.Tock can integrate and experiment with both classic and Generative AI (LLM, RAG) models
 
-![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 24.3.2](https://img.shields.io/badge/AppVersion-24.3.2-informational?style=flat-square)
+![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 24.3.2](https://img.shields.io/badge/AppVersion-24.3.2-informational?style=flat-square)
 
 ## DLDR
 
@@ -10,7 +10,7 @@ To install the chart with the release name `my-release`:
 
 ```console
 $ helm registry login -u myuser registry.hub.docker.com
-$ helm install my-release  oci://registry.hub.docker.com/onelans/tock --version 0.3.4
+$ helm install my-release  oci://registry.hub.docker.com/onelans/tock --version 0.4.2
 ```
 
 ## Introduction
@@ -22,7 +22,8 @@ This chart helps to setup a Tock environnement.
 | Repository | Name | Version |
 |------------|------|---------|
 | https://charts.bitnami.com/bitnami | mongodb | 13.6.8 |
-| https://opensearch-project.github.io/helm-charts/ | opensearch | 2.20.0 |
+| https://opensearch-project.github.io/helm-charts/ | opensearch | 2.21.0 |
+| https://opensearch-project.github.io/helm-charts/ | opensearch-dashboards | 2.19.0 |
 
 ## Sections
 
@@ -187,13 +188,18 @@ This creates values, but sectioned into own section tables if a section comment 
 | global.NetworkPolicy.enabled | bool | `false` | Enable creation of NetworkPolicy resources |
 | global.clusterDomain | string | `"cluster.local"` | Default Kubernetes cluster domain |
 | global.deployMongoDb.enabled | bool | `true` | If true Deploy MongoDB subchart |
+| global.deployOpenSearch.dashboardEnabled | bool | `false` | If true Deploy OpenSearch Dashboard as subchart |
 | global.deployOpenSearch.enabled | bool | `false` | If true Deploy OpenSearch subchart |
+| global.deployOpenSearch.openSearchHost | string | `"opensearch-node1"` | for an existing opensearch cluster |
+| global.deployOpenSearch.openSearchPort | string | `"9200"` | for an existing opensearch cluster |
+| global.deployOpenSearch.openSearchPwd | string | `"admin"` | for an existing opensearch cluster |
+| global.deployOpenSearch.openSearchUser | string | `"admin"` | for an existing opensearch cluster |
 | global.imagePullSecrets | list | `[]` | Glocal Image pull secret E.g. imagePullSecrets:   - myRegistryKeySecretName  |
 | global.imageRegistry | string | `""` | Global Docker image registry |
 | global.initContainerImage | object | `{"containerSecurityContext":{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99},"pullPolicy":"IfNotPresent","pullSecrets":[],"registry":"docker.io","repository":"busybox","tag":"1.36.1"}` | initcontainer images |
 | global.initContainerImage.containerSecurityContext | object | `{"enabled":true,"runAsGroup":99,"runAsNonRoot":true,"runAsUser":99}` | Configure Container Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod @param containerSecurityContext.enabled Enabled init containers' Security Context @param containerSecurityContext.runAsUser Set init container Server containers' Security Context runAsUser |
 | global.mongodbPort | string | `"27017"` | If mongoDB is not deployed by the chart, the mongodb port |
-| global.mongodbUrls | string | `"mongodb://myuser:mypass@10.118.127.233:27017,10.118.127.234:27017,10.118.127.235:27017/mydb?replicaSet=rs0"` | If mongoDB is not deployed by the chart, you can use this to connect to an external mongoDB mongodbUrls: mongodb://myuser:mypass@fqdn-node1:27017,fqdn-node2:27017,fqdn-node3:27017/mydb?replicaSet=rs0 |
+| global.mongodbUrls | string | `"mongodb://myuser:mypass@xx.xx.xx.xx:27017,xx.xx.xx.xx:27017,xx.xx.xx.xx:27017/mydb?replicaSet=rs0"` | If mongoDB is not deployed by the chart, you can use this to connect to an external mongoDB mongodbUrls: mongodb://myuser:mypass@fqdn-node1:27017,fqdn-node2:27017,fqdn-node3:27017/mydb?replicaSet=rs0 |
 | global.mongodbcheckfqdn | string | `"fqdn-node1"` | If mongoDB is not deployed by the chart, the node use to check if the mongodb is up |
 | global.wildcardDomain | string | `"rancher.localhost"` | Default domain used for ingress |
 
@@ -268,7 +274,6 @@ This creates values, but sectioned into own section tables if a section comment 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | opensearch.clusterName | string | `"opensearch-cluster"` | OpenSearch architectureCluster name |
-| opensearch.extraEnvs[0].value | string | `"DoThisOne12+"` | default initial admin password |
 | opensearch.opensearchJavaOpts | string | `"-Xms512m -Xmx512m"` | OpenSearch java options |
 | opensearch.replicas | int | `3` | Cluster node number |
 | opensearch.singleNode | bool | `false` | Deploy as single node |
@@ -278,6 +283,7 @@ This creates values, but sectioned into own section tables if a section comment 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | opensearch.extraEnvs[0].name | string | `"OPENSEARCH_INITIAL_ADMIN_PASSWORD"` |  |
+| opensearch.extraEnvs[0].value | string | `"DoThisOne12+"` |  |
 
 ## Authentification configurations
 

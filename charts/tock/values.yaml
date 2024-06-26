@@ -21,6 +21,9 @@ global:
     # -- If true Deploy OpenSearch subchart
     # @section -- Global
     enabled: false
+    # -- If true Deploy OpenSearch Dashboard as subchart
+    # @section -- Global
+    dashboardEnabled: false
     # -- for an existing opensearch cluster
     # @section -- Global
     openSearchPort : "9200"
@@ -36,7 +39,7 @@ global:
   # -- If mongoDB is not deployed by the chart, you can use this to connect to an external mongoDB
   # @section -- Global
   #mongodbUrls: mongodb://myuser:mypass@fqdn-node1:27017,fqdn-node2:27017,fqdn-node3:27017/mydb?replicaSet=rs0
-  mongodbUrls: "mongodb://myuser:mypass@10.118.127.233:27017,10.118.127.234:27017,10.118.127.235:27017/mydb?replicaSet=rs0"
+  mongodbUrls: "mongodb://myuser:mypass@xx.xx.xx.xx:27017,xx.xx.xx.xx:27017,xx.xx.xx.xx:27017/mydb?replicaSet=rs0"
   # -- If mongoDB is not deployed by the chart, the node use to check if the mongodb is up
   # @section -- Global
   mongodbcheckfqdn: fqdn-node1
