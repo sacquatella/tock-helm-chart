@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: 24.3.2
+appVersion: 24.3.4
 description: A helm chart for Tock. Tock is an open conversational AI platform. It's a complete solution to build conversational agents aka bots.Tock can integrate and experiment with both classic and Generative AI (LLM, RAG) models
 name: tock
 type: application
-version: 0.4.2
+version: 0.4.3
 
 maintainers:
   - name: stephanacquatella
