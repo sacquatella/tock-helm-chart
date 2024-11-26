@@ -1,5 +1,8 @@
 # Helm Chart for Tock  (theopenconversationkit)
 
+This project is now archived, please see the official project [tock-helm-chart](https://github.com/theopenconversationkit/tock-helm-chart)
+
+---
 
 [Tock](https://doc.tock.ai/fr/), an open conversational AI platform provide a complete solution to build conversational agents aka bots.
 
